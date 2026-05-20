@@ -7,7 +7,7 @@ const CourseCategory = () => {
 
     function handleForm(formData){
         console.log('handle form is called')
-        apiconnector('post','http://localhost:4000/api/v1/course/course-category/add-category',formData)
+        apiconnector('post','https://examyug-dashboard-backend.onrender.com/api/v1/course/course-category/add-category',formData)
     }
   return (
     <div>
