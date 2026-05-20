@@ -8,7 +8,7 @@ export const addCourse=(formData)=>{
         const toastID=toast.loading('Adding your course please wait.....')
         dispatch(setLoading(true))
         try {
-            await apiconnector('post','http://localhost:4000/api/v1/course/add-course',formData)
+            await apiconnector('post','https://examyug-dashboard-backend.onrender.com/api/v1/course/add-course',formData)
             toast.success('Course is added successfully!!!',{id:toastID})
         } catch (error) {
             toast.error(error.response.data.message,{id:toastID})

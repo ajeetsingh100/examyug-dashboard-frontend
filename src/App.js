@@ -10,6 +10,8 @@ import AddBook from './components/Book/AddBook'
 import AddBookset from './components/Book/AddBookset'
 import { Toaster } from 'react-hot-toast';
 import CourseCategory from './components/Category/CourseCategory';
+import TodaySales from './pages/TodaySales';
+import SalesHistory from './pages/SalesHistory';
 
 function App() {
   return (
@@ -40,6 +42,11 @@ function App() {
            <Route path="/book/">
             <Route path='add-bookset' element={<AddBookset/>}/>
             <Route path='view-all-bookset'/>
+          </Route>
+          {/* sales route */}
+          <Route path="/sales/">
+            <Route path='today-sales' element={<TodaySales/>}/>
+            <Route path='sales-history' element={<SalesHistory/>}/>
           </Route>
       </Routes>
     </DashboardLayout>

@@ -165,15 +165,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </h6>
         <ul className="nav flex-column mb-3 gap-1">
           <li className="nav-item">
-            <Link to="/today-sold" className="nav-link d-flex  align-items-center gap-3 rounded hover-bg py-2 px-3">
+            <Link to="/sales/today-sales" className="nav-link d-flex  align-items-center gap-3 rounded hover-bg py-2 px-3">
               <i className="bi bi-cart-check fs-5"></i>
-              <span >Today's Sold</span>
+              <span >Today's Sales</span>
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/sold-history" className="nav-link d-flex  align-items-center gap-3 rounded hover-bg py-2 px-3">
+            <Link to="/sales/sales-history" className="nav-link d-flex  align-items-center gap-3 rounded hover-bg py-2 px-3">
               <i className="bi bi-clock-history fs-5"></i>
-              <span >Sold History</span>
+              <span >Sales History</span>
             </Link>
           </li>
 
