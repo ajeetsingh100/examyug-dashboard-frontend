@@ -28,7 +28,7 @@ const AddCourse = () => {
 
     useEffect(()=>{
         async function loadCategory(){
-                    const response= await apiconnector('get','http://localhost:4000/api/v1/course/course-category/get-all-category')
+                    const response= await apiconnector('get','https://examyug-dashboard-backend.onrender.com/api/v1/course/course-category/get-all-category')
                     console.log(response)
                     if(response.data.success){
                         setCourseCategory(response.data.allCategories)

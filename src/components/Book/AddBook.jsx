@@ -29,7 +29,7 @@ const AddBook = () => {
     /*----loading category------*/
     useEffect(()=>{
          async function loadCategory(){
-            const response= await apiconnector('get','http://localhost:4000/api/v1/book/book-category/get-all-category')
+            const response= await apiconnector('get','https://code-catalyst-backend.onrender.com/api/v1/book/book-category/get-all-category')
             console.log(response)
             if(response.data.success){
                 setBookCategory(response.data.allCategories)
