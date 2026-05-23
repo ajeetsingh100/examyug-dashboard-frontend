@@ -30,11 +30,9 @@ const AddBook = () => {
     /*----loading category------*/
     useEffect(()=>{
          async function loadCategory(){
-<<<<<<< HEAD
-            const response= await apiconnector('get','https://examyug-dashboard-backend.onrender.com/api/v1/book/book-category/get-all-category')
-=======
+
             const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/book-category/get-all-category`)
->>>>>>> 7ea2271 (all changes saved)
+
             console.log(response)
             if(response.data.success){
                 setBookCategory(response.data.allCategories)

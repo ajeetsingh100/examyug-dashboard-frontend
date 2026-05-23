@@ -8,11 +8,9 @@ export const addBook=(formData)=>{
         const toastID=toast.loading('Adding your book please wait....')
         dispatch(setLoading(true))
         try {
-<<<<<<< HEAD
-            await apiconnector('post','https://examyug-dashboard-backend.onrender.com/api/v1/book/add-book',formData)
-=======
+
             await apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/book/add-book`,formData)
->>>>>>> 7ea2271 (all changes saved)
+
             toast.success('Your book is added successfully!!!',{id:toastID})
         } catch (error) {
             toast.error(error.response.data.message,{id:toastID})
@@ -26,11 +24,10 @@ export const editBook=(formData)=>{
     return async()=>{
         const toastID=toast.loading('Updating your book please wait...')
         try {
-<<<<<<< HEAD
-            await apiconnector('patch','https://examyug-dashboard-backend.onrender.com/api/v1/book/edit-book',formData)        
-=======
+
+
             await apiconnector('patch',`${SERVER_API.MAIN_SERVER}/api/v1/book/edit-book`,formData)        
->>>>>>> 7ea2271 (all changes saved)
+
             toast.success('Your Book details updated successfully',{id:toastID})
         } catch (error) {
             toast.error("Error while updating book details",{id:toastID})
@@ -38,8 +35,7 @@ export const editBook=(formData)=>{
         }
     }
 }
-<<<<<<< HEAD
-=======
+
 
 export const searchBook=(keyword,page,limit)=>{
     return async(dispatch)=>{
@@ -55,4 +51,4 @@ export const searchBook=(keyword,page,limit)=>{
         }       
     }
 }
->>>>>>> 7ea2271 (all changes saved)
+
