@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addBook } from '../../services/operations/bookAPI'
 import { apiconnector } from '../../services/apiconnector'
 import toast from 'react-hot-toast'
+import { SERVER_API } from '../../services/api'
 
 
 const AddBook = () => {
@@ -29,7 +30,11 @@ const AddBook = () => {
     /*----loading category------*/
     useEffect(()=>{
          async function loadCategory(){
+<<<<<<< HEAD
             const response= await apiconnector('get','https://examyug-dashboard-backend.onrender.com/api/v1/book/book-category/get-all-category')
+=======
+            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/book-category/get-all-category`)
+>>>>>>> 7ea2271 (all changes saved)
             console.log(response)
             if(response.data.success){
                 setBookCategory(response.data.allCategories)
@@ -54,23 +59,23 @@ const AddBook = () => {
             <div>
                 <form className='mt-5 needs-validation   shadow-sm bg-white  shadow-lg'  noValidate onSubmit={handleSubmit(handleFormData)} >
                     
-                        <div class="row p-4 gy-3">
+                        <div className="row p-4 gy-3">
                             <h4>Book Information</h4>
                             <hr />
-                        <div class="form-group col-12 col-md-6">
-                            <label for="inputEmail4" className='form-label'>Book title</label>
-                            <input type="text" class={`form-control form-control-sm ${errors.bookTitle&&`is-invalid`}`}  id="inputEmail4" {...register('bookTitle',{required:'*book title is required'})}/>
+                        <div className="form-group col-12 col-md-6">
+                            <label htmlFor="inputEmail4" className='form-label'>Book title</label>
+                            <input type="text" className={`form-control form-control-sm ${errors.bookTitle&&`is-invalid`}`}  id="inputEmail4" {...register('bookTitle',{required:'*book title is required'})}/>
                             <div className='invalid-feedback'>
                                 {errors.bookTitle?.message}
                             </div>
                         </div>
-                        <div class="form-group col-12 col-md-6">
-                            <label for="inputEmail4" className='form-label'>Book category</label>
+                        <div className="form-group col-12 col-md-6">
+                            <label htmlFor="inputEmail4" className='form-label'>Book category</label>
                             <select name="" className={`form-select form-select-sm ${errors.categoryName&&`is-invalid`}`} id="" {...register('categoryName',{required:'please select a category'})}>
                                 <option value="">--select category--</option>
                                 {
                                     bookCategory?.map(category=>
-                                        <option value={category._id}>{category.categoryName}</option>
+                                        <option key={category._id} value={category._id}>{category.categoryName}</option>
                                     )
                                 }
                             </select>
@@ -78,16 +83,16 @@ const AddBook = () => {
                                 {errors.categoryName?.message}
                            </div>
                         </div>
-                        <div class="form-group  col-md-12">
-                            <label for="inputPassword4" className='form-label'>Book description</label>
+                        <div className="form-group  col-md-12">
+                            <label htmlFor="inputPassword4" className='form-label'>Book description</label>
                             <textarea className={`form-control form-control-sm ${errors.bookDescription&&'is-invalid'}`} cols={4} rows={2} id="inputAddress" placeholder="describe your course...." {...register('bookDescription',{required:'*book description is required'})}></textarea>
                             <div className='invalid-feedback'>
                                 {errors.bookDescription?.message}
                             </div>
                         </div>
 
-                        <div class="form-group col-12 col-md-6">
-                                <label for="inputAddress" className='form-label'>Demo link</label>
+                        <div className="form-group col-12 col-md-6">
+                                <label htmlFor="inputAddress" className='form-label'>Demo link</label>
                                 <input type="file" className={`form-control form-control-sm ${errors.demoPdf&&'is-invalid'}`}id="inputPassword4"  placeholder='enter the course duration eg. 4 months/1 year ' 
                                 {...register('demoPdf',
                                         {
@@ -116,8 +121,8 @@ const AddBook = () => {
                                     {errors.demoPdf?.message}
                                 </div>
                         </div>
-                        <div class="form-group col-12 col-md-6">
-                                <label for="inputAddress2" className='form-label'>Thumbnail</label>
+                        <div className="form-group col-12 col-md-6">
+                                <label htmlFor="inputAddress2" className='form-label'>Thumbnail</label>
                                 <input type="file" className={`form-control form-control-sm  ${errors.thumbnail&&'is-invalid'}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
                                 {...register(
                                             'thumbnail',
@@ -141,10 +146,10 @@ const AddBook = () => {
                         
                         <h4 className='mt-5'>Book Pricing</h4>
                         <hr />
-                        <div class="form-group  col-12 col-md-4">
-                            <label for="inputCity" className='form-label'>MRP</label>
+                        <div className="form-group  col-12 col-md-4">
+                            <label htmlFor="inputCity" className='form-label'>MRP</label>
                             <div className='input-group'>
-                                <i class="bi bi-currency-rupee input-group-prepend input-group-text"></i>
+                                <i className="bi bi-currency-rupee input-group-prepend input-group-text"></i>
                                 <input type="text" className={`form-control form-control-sm ${errors.maxPrice&&'is-invalid'}`} id="inputCity" {...register('maxPrice',{required:'*MRP is required'})}/>
                                 <div className='invalid-feedback'>
                                     {errors.maxPrice?.message}
@@ -152,11 +157,11 @@ const AddBook = () => {
                             </div>
                             
                         </div>
-                        <div class="form-group col-12 col-md-4">
-                            <label for="inputState" className='form-label'>Price</label>
+                        <div className="form-group col-12 col-md-4">
+                            <label htmlFor="inputState" className='form-label'>Price</label>
                             <div className='input-group'>
-                                 <i class="bi bi-currency-rupee input-group-text"></i>
-                                 <input type="text" name="" id="inputState" className={`form-control form-control-sm${errors.sellingPrice&&'is-invalid'}`} {...register('sellingPrice',{required:'*price is required'})} />
+                                 <i className="bi bi-currency-rupee input-group-text"></i>
+                                 <input type="text" name="" id="inputState" className={`form-control form-control-sm ${errors.sellingPrice&&'is-invalid'}`} {...register('sellingPrice',{required:'*price is required'})} />
                                 <div className='invalid-feedback'>
                                     {errors.sellingPrice?.message}
                                 </div>

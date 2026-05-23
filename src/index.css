@@ -7,7 +7,14 @@
   --header-height: 70px;
   --transition-speed: 0.3s;
 }
-
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 html {
   font-size: 14px; /* Reduces base font size for a more compact, professional UI */
 }
@@ -291,4 +298,18 @@ body {
 /* Ensure the icon bg blends well with white card */
 [data-bs-theme="light"] .card .bg-opacity-10 {
   background-color: rgba(243, 13, 13, 0.1) !important;
+}
+
+/* Modern smooth accordion transitions using CSS Grid */
+.sidebar .accordion-collapse {
+  display: grid !important;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.sidebar .accordion-collapse.show {
+  grid-template-rows: 1fr;
+}
+.sidebar .accordion-collapse > div {
+  min-height: 0;
 }

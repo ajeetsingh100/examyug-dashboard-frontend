@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addCourse } from '../../services/operations/courseAPI'
 import toast from 'react-hot-toast'
 import { apiconnector } from '../../services/apiconnector'
+import { SERVER_API } from '../../services/api'
 const AddCourse = () => {
     const {reset,handleSubmit,formState:{errors},register}=useForm()
     const [courseCategory,setCourseCategory]=useState([])
@@ -28,7 +29,7 @@ const AddCourse = () => {
 
     useEffect(()=>{
         async function loadCategory(){
-                    const response= await apiconnector('get','https://examyug-dashboard-backend.onrender.com/api/v1/course/course-category/get-all-category')
+                    const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/course-category/get-all-category`)
                     console.log(response)
                     if(response.data.success){
                         setCourseCategory(response.data.allCategories)
@@ -62,7 +63,6 @@ const AddCourse = () => {
                     <label htmlFor="inputEmail4" className='form-label'>Course category</label>
                     <select name="" className={`form-select form-select-sm ${errors.categoryName&&`is-invalid`}`} {...register("categoryName",{required:"*please select a category"})} id="">
                         <option value=''>--select category---</option>
-                        <option value='SSC'>SSC</option>
                         {
                             courseCategory?.map(category=>
                                 <option  key={category._id} value={category._id}>{category.categoryName}</option>
