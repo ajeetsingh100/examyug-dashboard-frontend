@@ -106,7 +106,7 @@ const AddBook = () => {
                                                     const size=file[0].size
                                                     console.log(file[0].size)
                                                     return(
-                                                        size<510000||'*pdf size exceeded!! please upload pdf below size 5MB'
+                                                        size<5242880||'*pdf size exceeded!! please upload pdf below size 5MB'
                                                     )                                                
                                                 },
                                                 

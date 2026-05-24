@@ -15,26 +15,28 @@ const AddBookset = () => {
     const [searchedBooks,setSearchedBooks]=useState([])
     const [bookExistFlag,setBookExistFlag]=useState(false)
     const [bookSearchFlag,setBookSearchFlag]=useState(false)
-    const [counter,setCounter]=useState(0)
+    const [counter,setCounter]=useState(1)
     const [totalPages,setTotalPages]=useState(0)
     const [keyword,setKeyword]=useState('')
     const [keywordFlag,setKeywordFlag]=useState(false)
     const searchBox=useRef()
+    const limit=useRef(null)
     const [tempBookList,setTempBookList]=useState([])
     const dispatch=useDispatch()
     const {reset,handleSubmit,register,watch,formState:{errors}}=useForm()
     const maxPrice=watch('maxPrice')
     const sellingPrice=watch('sellingPrice')
 
-    async function handleBookSearch(page=undefined, limit=undefined){
+    async function handleBookSearch(){
         console.log('handle search book called')
         console.log(bookSearchFlag)
         const keyword=searchBox.current.value
+        const data_limit=limit.current.value
         if(!keyword.trim()){
             setKeywordFlag(true)
             return
         }
-        const data=await dispatch(searchBook(keyword))
+        const data=await dispatch(searchBook(keyword,counter,data_limit))
         setSearchedBooks(data.result)
         setTotalPages(data.totalPages)
         setBookSearchFlag(true)
@@ -97,7 +99,14 @@ const AddBookset = () => {
             searchBox.current.value=''
             setKeywordFlag(false)
         }
+        
     },[booksetLoading])
+
+    useEffect(()=>{
+        if(searchedBooks.length>0){
+            handleBookSearch()
+        }
+    },[counter])
   return (
     <div>
         <div className='container mt-3'>
@@ -144,15 +153,15 @@ const AddBookset = () => {
 
                         <div className="form-group col-12 col-md-6">
                                 <label htmlFor="inputAddress2" className='form-label'>Thumbnail</label>
-                                <input type="file" className={`form-control form-control-sm ${errors.thumbnail&&'is-invalid'}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
+                                <input type="file" className={`form-control form-control-sm ${errors.thumbnail&&`is-invalid`}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
                                     {...register('thumbnail',
                                         {   required:'thumbnail is required',
                                             validate:{
-                                                // checkFileSize:(file)=>{
-                                                //     return(
-                                                //         file[0].size<21000||'thumbnail should be less than 2MB'
-                                                //     )
-                                                // },
+                                                checkFileSize:(file)=>{
+                                                    return(
+                                                        file[0].size<2097152||'thumbnail should be less than 2MB'
+                                                    )
+                                                },
                                                 checkFileType:(file)=>{
                                                     const allowedTypes=['image/png','image/jpeg','image/jpg']
                                                     return(
@@ -243,18 +252,26 @@ const AddBookset = () => {
                                         )
                                    }
                                 </table>
-                            </div>
-                            <nav aria-label="...">
+                            </div>                      
+                               
+                                <nav aria-label="..." className={`${searchedBooks.length>0?`d-block`:`d-none`}`}>
                                 <div className='d-flex gap-1 align-items-center '>
-                                    <button  type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-backward-fill'></span></button>
-                                    <button  type='button' className="btn btn-sm btn-outline shadow  " style={{border:'1px solid grey'}} ><span className='bi bi-rewind-fill' onClick={()=>setCounter(prev=>Math.min(1,prev-1))}></span></button>
+                                    <button  type='button' className="btn b tn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-backward-fill'></span></button>
+                                    <button  type='button' className="btn btn-sm btn-outline shadow  " style={{border:'1px solid grey'}} onClick={()=>setCounter(prev=>Math.max(1,prev-1))} ><span className='bi bi-rewind-fill' ></span></button>
                                         Page
                                         <input type="text" name="" id="" className="form-control form-control-sm text-center" disabled  value={counter} style={{width:"35px"}}/>
                                         of {totalPages}                                         
-                                   <button  type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-fast-forward-fill' onClick={()=>setCounter(prev=>Math.max(totalPages,prev+1))}></span></button>
+                                   <button  type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}}onClick={()=>setCounter(prev=>Math.min(totalPages,prev+1))} ><span className='bi bi-fast-forward-fill' ></span></button>
                                    <button type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-forward-fill'></span></button>
+                                    <select name="" id="" defaultValue={3} ref={limit} className=' shadow-lg form-control form-control-sm text-center' style={{width:"35px"}}>
+                                        <option value={3}>3</option>
+                                        <option value={5}>5</option>
+                                        <option value={15}>15</option>
+                                        <option value={20}>20</option>                    
+                                   </select>
                                 </div>
                             </nav>
+                            
                         </div>
 
                          <div className='form-group col-12'>

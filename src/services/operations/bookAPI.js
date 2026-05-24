@@ -48,7 +48,8 @@ export const searchBook=(keyword,page,limit)=>{
         }catch(error){
             toast.error('Error while searching book')
             console.log('searchBook API',error)
-        }       
+        }
+               
     }
 }
 
