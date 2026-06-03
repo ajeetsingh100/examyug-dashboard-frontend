@@ -154,10 +154,10 @@ body {
 }
 
 /* Card premium shadows */
-.card {
+.cardx {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.card:hover {
+.cardx:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
@@ -253,35 +253,39 @@ body {
 
 /* Buttons */
 .btn-primary {
+  background-color:  #0d6efd !important;
+  border-color:  #0d6efd !important;
+  color: #ffffff !important;
+}
+.btn-primary:hover {
+  background-color:  #0360f7 !important;
+  border-color:  #0360f7 !important;
+}
+.btn-danger {
   background-color: #F30D0D !important;
   border-color: #F30D0D !important;
   color: #ffffff !important;
 }
-.btn-primary:hover {
+.btn-danger:hover {
   background-color: #d10a0a !important;
   border-color: #d10a0a !important;
 }
 
-.btn-secondary, 
-.btn-outline-secondary {
+.btn-warning, 
+.btn-outline-warning {
   background-color: #FFD700 !important;
   border-color: #FFD700 !important;
   color: #000000 !important;
 }
-.btn-secondary:hover, 
-.btn-outline-secondary:hover {
+.btn-warning:hover, 
+.btn-outline-warning:hover {
   background-color: #e6c200 !important;
   border-color: #e6c200 !important;
   color: #000000 !important;
 }
 
 /* Cards */
-.card {
-  border-top: 4px solid #F30D0D !important;
-  border-left: none !important;
-  border-right: none !important;
-  border-bottom: none !important;
-}
+
 [data-bs-theme="light"] .card {
   background-color: #ffffff !important;
 }

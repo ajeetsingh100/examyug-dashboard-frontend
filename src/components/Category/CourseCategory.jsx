@@ -2,18 +2,21 @@ import React from 'react'
 import { apiconnector } from '../../services/apiconnector'
 import { useForm } from 'react-hook-form'
 import { SERVER_API } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addCategory } from '../../services/operations/courseCategories'
+import toast from 'react-hot-toast'
 
 const CourseCategory = () => {
     const {reset,register,handleSubmit,formState:{errors}}=useForm()
+    const navigate=useNavigate()
+    const dispatch=useDispatch()
 
-    function handleForm(formData){
-        console.log('handle form is called')
-
-        apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/course/course-category/add-category`,formData)
-
+    async function handleForm(formData){
+      dispatch(addCategory(formData,navigate))
     }
   return (
-    <div>
+    <div >
         <div className='container mt-3'>
             <h4>
                 Add Course Category
@@ -29,12 +32,12 @@ const CourseCategory = () => {
                         <div className="form-group col-12  d-flex justify-content-center">
                             <div className='form-group w-50 '>
                                 <label htmlFor="" className='form-label'>Category title</label>
-                                <input type="text"  className={`form-control form-control-sm ${errors.categoryName&&`is-invalid`}`} {...register('categoryName',{required:'*category name is required'})}/>
+                                <input type="text"  className={`form-control form-control-sm ${errors.categoryTitle&&`is-invalid`}`} {...register('categoryTitle',{required:'*category name is required'})}/>
                                 <div className='invalid-feedback'>
-                                    {errors.categoryName?.message}
+                                    {errors.categoryTitle?.message}
                                 </div>
                                 <div className='d-flex justify-content-center mt-3 '>
-                                    <button type="submit" className='btn btn-primary btn-sm'>Add category</button>
+                                    <button type="submit" className='btn btn-danger btn-sm'>Add category</button>
                                 </div>
                             </div>                           
                         </div>                       

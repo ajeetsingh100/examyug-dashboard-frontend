@@ -1,7 +1,7 @@
 import toast from "react-hot-toast"
 import { apiconnector } from "../apiconnector"
 import { SERVER_API } from "../api"
-import { setLoading } from "../../slices/booksetSlice"
+import { setLoading, setSearchBarLoader } from "../../slices/booksetSlice"
 
 export const addBookset=(formData)=>{
     return async(dispatch)=>{
@@ -17,3 +17,16 @@ export const addBookset=(formData)=>{
         dispatch(setLoading(false))
     }
 }
+
+export const searchBookset=(keyword,page,limit)=>{
+    return async(dispatch)=>{
+        dispatch(setSearchBarLoader(true))
+        try {
+            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/bookset/searched-bookset?keyword=${keyword}&page=${page}&limit=${limit}`)
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+}
+

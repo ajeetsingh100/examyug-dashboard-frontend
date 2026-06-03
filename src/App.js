@@ -12,6 +12,14 @@ import { Toaster } from 'react-hot-toast';
 import CourseCategory from './components/Category/CourseCategory';
 import TodaySales from './pages/TodaySales';
 import SalesHistory from './pages/SalesHistory';
+import ViewAllCourses from './components/Course/ViewAllCourses';
+import ManageCategories from './components/Category/ManageCategories';
+import BookCategory from './components/Category/BookCategory';
+import ViewAllCourseCategories from './components/Category/ViewAllCourseCategories';
+import ViewAllBookCategories from './components/Category/ViewAllBookCategories';
+import ViewAllCategories from './components/Category/ViewAllCategories';
+import ViewAllBooks from './components/Book/ViewAllBooks';
+import ViewAllBookset from './components/Book/ViewAllBookset';
 
 function App() {
   return (
@@ -26,22 +34,26 @@ function App() {
           {/* course route */}
           <Route path="/course/">
             <Route path='create-course' element={<AddCourse/>}/>
-            <Route path='view-all-course'/>
+            <Route path='view-all-courses' element={<ViewAllCourses/>}/>
           </Route>
           {/* category route */}
-          <Route path="/category/">
-            <Route path='create-category' element={<CourseCategory/>}/>
-            <Route path='view-all-category'/>
+          <Route path="/categories/" element={<ManageCategories/>}>
+            <Route path='course/add-category' element={<CourseCategory/>}/>
+            <Route path='book/add-category' element={<BookCategory/>}/>          
           </Route>
+            <Route path='/categories/view-all-categories/' element={<ViewAllCategories/>}>
+              <Route path='course' element={<ViewAllCourseCategories/>}  />
+              <Route path='book' element={<ViewAllBookCategories/>}  />            
+            </Route>
           {/* book route */}
            <Route path="/book/">
             <Route path='add-book' element={<AddBook/>}/>
-            <Route path='view-all-books' element/>
+            <Route path='view-all-books' element={<ViewAllBooks/>}/>
           </Route>
           {/* bookset route */}
-           <Route path="/book/">
+           <Route path="/bookset/">
             <Route path='add-bookset' element={<AddBookset/>}/>
-            <Route path='view-all-bookset'/>
+            <Route path='view-all-booksets'element={<ViewAllBookset/>}/>
           </Route>
           {/* sales route */}
           <Route path="/sales/">

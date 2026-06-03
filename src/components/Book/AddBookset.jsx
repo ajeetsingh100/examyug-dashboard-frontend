@@ -17,10 +17,11 @@ const AddBookset = () => {
     const [bookSearchFlag,setBookSearchFlag]=useState(false)
     const [counter,setCounter]=useState(1)
     const [totalPages,setTotalPages]=useState(0)
+    const [totalRecords,setTotalRecords]=useState(0)
     const [keyword,setKeyword]=useState('')
     const [keywordFlag,setKeywordFlag]=useState(false)
     const searchBox=useRef()
-    const limit=useRef(null)
+    const [limit,setLimit]=useState(3)
     const [tempBookList,setTempBookList]=useState([])
     const dispatch=useDispatch()
     const {reset,handleSubmit,register,watch,formState:{errors}}=useForm()
@@ -28,30 +29,36 @@ const AddBookset = () => {
     const sellingPrice=watch('sellingPrice')
 
     async function handleBookSearch(){
-        console.log('handle search book called')
-        console.log(bookSearchFlag)
-        const keyword=searchBox.current.value
-        const data_limit=limit.current.value
-        if(!keyword.trim()){
+        const searched_keyword=searchBox.current.value
+        let page
+        setKeyword(searched_keyword)
+        if(keyword!==searched_keyword){
+            page=1
+            setCounter(1)
+        }else{
+            page=counter
+        }
+        if(!searched_keyword.trim()){
             setKeywordFlag(true)
             return
         }
-        const data=await dispatch(searchBook(keyword,counter,data_limit))
-        setSearchedBooks(data.result)
-        setTotalPages(data.totalPages)
-        setBookSearchFlag(true)
+        const response=await dispatch(searchBook(searched_keyword,page,limit))
+        setSearchedBooks(response.data.books)       
+        setTotalPages(response.data.totalPages)             
+        setBookSearchFlag(true)              
         setKeywordFlag(false)
+
     }
 
     function handleFormData(form){
         const formData=new FormData()
         const bookList=tempBookList.map(book=>book._id)
-        formData.append('booksetName',form.booksetName)
+        formData.append('booksetTitle',form.booksetTitle)
         formData.append('booksetDescription',form.booksetDescription)
         formData.append('thumbnail',form.thumbnail[0])
         formData.append('sellingPrice',form.sellingPrice)
         formData.append('maxPrice',form.maxPrice)
-        formData.append('categoryName',form.categoryName)
+        formData.append('categoryID',form.category)
         formData.append('bookList',JSON.stringify(bookList))
         dispatch(addBookset(formData))
     }
@@ -79,7 +86,7 @@ const AddBookset = () => {
 
     useEffect(()=>{
         async function loadCategories(){
-            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/book-category/get-all-category`)
+            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/get-all-categories`)
             console.log('response',response)
             if(response.data.success){
                 setCategories(response.data.allCategories)
@@ -103,10 +110,21 @@ const AddBookset = () => {
     },[booksetLoading])
 
     useEffect(()=>{
-        if(searchedBooks.length>0){
+        if(searchBox.current.value.trim()!==''){
+            handleBookSearch()
+        }        
+           
+    },[counter])
+
+    useEffect(()=>{
+        if(searchBox.current.value.trim()!=''){
+            setCounter(1)
             handleBookSearch()
         }
-    },[counter])
+    },[limit])
+    
+     
+  
   return (
     <div>
         <div className='container mt-3'>
@@ -123,23 +141,23 @@ const AddBookset = () => {
                             <hr />
                         <div className="form-group col-12 col-md-6">
                             <label htmlFor="inputEmail4" className='form-label'>Bookset title</label>
-                            <input type="email" className={`form-control form-control-sm ${errors.booksetName&&`is-invalid`}`} {...register('booksetName',{required:'*bookset name is required'})} id="inputEmail4"/>
+                            <input type="email" className={`form-control form-control-sm ${errors.booksetTitle&&`is-invalid`}`} {...register('booksetTitle',{required:'*bookset name is required'})} id="inputEmail4"/>
                              <div className='invalid-feedback'>
-                                {errors.booksetName?.message}
+                                {errors.booksetTitle?.message}
                             </div>
                         </div>
                         <div className="form-group col-12 col-md-6">
                             <label htmlFor="inputEmail4" className='form-label'>Book category</label>
-                            <select name="" className={`form-select form-select-sm' id="" ${errors.categoryName&&`is-invalid`}`} {...register('categoryName',{required:'*please select a particular category'})}>
+                            <select name="" className={`form-select form-select-sm' id="" ${errors.category&&`is-invalid`}`} {...register('category',{required:'*please select a particular category'})}>
                                 <option value="">--select a category--</option>
                                 {
                                     categories?.map(category=>
-                                        <option key={category._id} value={category._id}>{category.categoryName}</option>
+                                        <option key={category._id} value={category._id}>{category.categoryTitle}</option>
                                     )
                                 }
                             </select>
                             <div className='invalid-feedback'>
-                                {errors.categoryName?.message}
+                                {errors.category?.message}
                             </div>
                         </div>
                         <div className="form-group  col-md-12">
@@ -215,9 +233,9 @@ const AddBookset = () => {
                                      </div>
                                 )
                             }
-                             <div>
+                             <div className='position-relative'>
                                 <table className='table table-striped table-bordered border-2'>
-                                   <thead className='table-danger'>
+                                   <thead >
                                         <tr>
                                             <th>Sr.no</th>
                                             <th>Book Name</th>
@@ -226,19 +244,23 @@ const AddBookset = () => {
                                             <th>Action</th>
                                         </tr>
                                    </thead>
+                                   {loading&&<div className='position-absolute  w-100  d-flex justify-content-center align-items-center' style={{height:"calc(100% - 37px)",backgroundColor:"rgba(0,0,0,0.2)"}}>
+
+                                   </div>}
                                    {
                                         bookSearchFlag&&(
+                                            
                                             <tbody>
                                               {
                                                 searchedBooks.length>0?(
                                                     searchedBooks.map((book,index)=>
-                                                        <tr key={++index}>
-                                                            <td>{++index}</td>
+                                                        <tr key={book._id}>
+                                                            <td>{book.serial_no}</td>
                                                             <td>{book.bookTitle}</td>
-                                                            <td>{book.categoryName.categoryName}</td>
+                                                            <td>{book.category.categoryTitle}</td>
                                                             <td>{book.sellingPrice}</td>
                                                             <td>
-                                                                <button type='button' className="btn btn-sm btn-secondary" onClick={()=>handleAddBook(book)}><i className='bi bi-plus'></i></button>
+                                                                <button type='button' className="btn btn-sm btn-warning" onClick={()=>handleAddBook(book)}><i className='bi bi-plus'></i></button>
                                                             </td>
                                                         </tr>
                                                     )
@@ -263,7 +285,7 @@ const AddBookset = () => {
                                         of {totalPages}                                         
                                    <button  type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}}onClick={()=>setCounter(prev=>Math.min(totalPages,prev+1))} ><span className='bi bi-fast-forward-fill' ></span></button>
                                    <button type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-forward-fill'></span></button>
-                                    <select name="" id="" defaultValue={3} ref={limit} className=' shadow-lg form-control form-control-sm text-center' style={{width:"35px"}}>
+                                    <select name="" id=""    onChange={(e)=>setLimit(e.target.value)}  className=' shadow-lg form-control form-control-sm text-center' style={{width:"35px"}}>
                                         <option value={3}>3</option>
                                         <option value={5}>5</option>
                                         <option value={15}>15</option>
@@ -278,7 +300,7 @@ const AddBookset = () => {
                            <label htmlFor="" className='form-label' >Your bookset contains following books:</label>
                              <div>
                                 <table className='table table-striped table-bordered border-2'>
-                                   <thead className='table-danger'>
+                                   <thead>
                                         <tr>
                                             <th>Sr.no</th>
                                             <th>Book Name</th>
@@ -293,10 +315,10 @@ const AddBookset = () => {
                                         <tr key={++index}>
                                             <td>{++index}</td>
                                             <td>{book.bookTitle}</td>
-                                            <td>{book.categoryName?.categoryName}</td>
+                                            <td>{book.category?.categoryTitle}</td>
                                             <td>{book.sellingPrice}</td>
                                             <td>
-                                                <button type='button' className="btn btn-sm btn-primary" onClick={()=>handleRemoveBook(book)}><i className='bi bi-trash'></i></button>
+                                                <button type='button' className="btn btn-sm btn-danger" onClick={()=>handleRemoveBook(book)}><i className='bi bi-trash'></i></button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -364,7 +386,7 @@ const AddBookset = () => {
                         </div>           
                        
                             <div className='form-group mt-5 d-flex justify-content-center'>
-                                <button type="submit" className='btn btn-primary btn-sm'>Add Bookset</button>
+                                <button type="submit" className='btn btn-danger btn-sm'>Add Bookset</button>
                             </div>
                     </div>
               </form>

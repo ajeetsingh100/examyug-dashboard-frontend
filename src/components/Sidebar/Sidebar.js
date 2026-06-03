@@ -147,7 +147,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 <ul className="nav flex-column ms-4 border-start ps-2 gap-1">
                   <li className="nav-item">
                     <Link
-                      to="/category/create-category"
+                      to="/categories/course/add-category"
                       className="nav-link text-body py-1 px-3 rounded hover-bg small"
                     >
                       Create Category
@@ -156,7 +156,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
                   <li className="nav-item">
                     <Link
-                      to="/category/view-all-categories"
+                      to="/categories/view-all-categories/course"
                       className="nav-link text-body py-1 px-3 rounded hover-bg small"
                     >
                       View All Categories
@@ -254,7 +254,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 <ul className="nav flex-column ms-4 border-start ps-2 gap-1">
                   <li className="nav-item">
                     <Link
-                      to="/book/add-bookset"
+                      to="/bookset/add-bookset"
                       className="nav-link text-body py-1 px-3 rounded hover-bg small"
                     >
                       Create Bookset
@@ -263,7 +263,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
                   <li className="nav-item">
                     <Link
-                      to="/book/view-all-booksets"
+                      to="/bookset/view-all-booksets"
                       className="nav-link text-body py-1 px-3 rounded hover-bg small"
                     >
                       View All Booksets

@@ -1,7 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
-    booksetLoading:false
+    loading:false,
+    searchBarLoader:false,
+    relay:false,
+    tableLoader:false,
+    editBookset:false
 }
 
 const booksetSlice=createSlice({
@@ -9,10 +13,23 @@ const booksetSlice=createSlice({
     initialState:initialState,
     reducers:{
         setLoading(state,action){
-            state.booksetLoading=action.payload
+            state.loading=action.payload
+        },
+         setSearchBarLoader(state,action){
+            state.searchBarLoader=action.payload
+        },
+         setRelay(state,action){
+            state.relay=action.payload
+        },
+         setTableLoader(state,action){
+            state.tableLoader=action.payload
+        },
+        setEditBookset(state,action){
+            state.editBookset=action.payload
         }
+
     }
 })
 
-export const { setLoading}=booksetSlice.actions
+export const { setLoading,setSearchBarLoader,setRelay,setTableLoader,setEditBookset}=booksetSlice.actions
 export default booksetSlice.reducer

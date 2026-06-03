@@ -5,6 +5,7 @@ import { addBook } from '../../services/operations/bookAPI'
 import { apiconnector } from '../../services/apiconnector'
 import toast from 'react-hot-toast'
 import { SERVER_API } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 
 const AddBook = () => {
@@ -12,6 +13,7 @@ const AddBook = () => {
     const {reset,register,handleSubmit,formState:{errors}}=useForm()
     const {loading}=useSelector(state=>state.book)
     const dispatch=useDispatch()
+    const navigate=useNavigate()
 
     function handleFormData(form){
     console.log('handleFormData function called!!!',form)
@@ -22,16 +24,16 @@ const AddBook = () => {
         formData.append('maxPrice',form.maxPrice)
         formData.append('sellingPrice',form.sellingPrice)
         formData.append('thumbnail',form.thumbnail[0])
-        formData.append('categoryName',form.categoryName)
+        formData.append('categoryID',form.category)
         formData.append('demoPdf',form.demoPdf[0])
-        dispatch(addBook(formData))  
+        dispatch(addBook(formData,navigate))  
         
     }
     /*----loading category------*/
     useEffect(()=>{
          async function loadCategory(){
 
-            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/book-category/get-all-category`)
+            const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/get-all-categories`)
 
             console.log(response)
             if(response.data.success){
@@ -69,16 +71,16 @@ const AddBook = () => {
                         </div>
                         <div className="form-group col-12 col-md-6">
                             <label htmlFor="inputEmail4" className='form-label'>Book category</label>
-                            <select name="" className={`form-select form-select-sm ${errors.categoryName&&`is-invalid`}`} id="" {...register('categoryName',{required:'please select a category'})}>
+                            <select name="" className={`form-select form-select-sm ${errors.category&`is-invalid`}`} id="" {...register('category',{required:'please select a category'})}>
                                 <option value="">--select category--</option>
                                 {
                                     bookCategory?.map(category=>
-                                        <option key={category._id} value={category._id}>{category.categoryName}</option>
+                                        <option key={category._id} value={category._id}>{category.categoryTitle}</option>
                                     )
                                 }
                             </select>
                            <div className='invalid-feedback'>
-                                {errors.categoryName?.message}
+                                {errors.category?.message}
                            </div>
                         </div>
                         <div className="form-group  col-md-12">
@@ -169,7 +171,7 @@ const AddBook = () => {
             
                        
                             <div className='form-group mt-5 d-flex justify-content-center '>
-                                <button type='submit' className='btn btn-primary btn-sm'>Add Book</button>
+                                <button type='submit' className='btn btn-danger btn-sm'>Add Book</button>
                             </div>
                     </div>
               </form>

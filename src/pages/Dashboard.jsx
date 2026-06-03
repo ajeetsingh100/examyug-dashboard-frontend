@@ -14,7 +14,7 @@ const Dashboard = () => {
 
             <div className="row g-4 mb-4">
               <div className="col-12 col-sm-6 col-xl-3">
-                <div className="card border-5 shadow-sm h-100">
+                <div className="card cardx border border-5 border-start-0 border-end-0 border-bottom-0 border-top-1 shadow border-primary h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center justify-content-between mb-3">
                       <h6 className="text-muted fw-semibold mb-0">Total Users</h6>
@@ -28,7 +28,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
-                <div className="card border-5 border-success shadow-sm h-100">
+                <div className="card cardx border border-5 border-start-0 border-end-0 border-bottom-0 border-top-1 border-success shadow h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center justify-content-between mb-3">
                       <h6 className="text-muted fw-semibold mb-0">Total Sales</h6>
@@ -42,7 +42,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
-                <div className="card border-5 border-primary shadow-sm h-100">
+                <div className="card border cardx  border-5 border-start-0 border-end-0 border-bottom-0 border-top-1 border-danger shadow h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center justify-content-between mb-3">
                       <h6 className="text-muted fw-semibold mb-0">Total Contents</h6>
@@ -67,7 +67,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-12 col-sm-6 col-xl-3">
-                <div className="card border-5 border-warning shadow-sm h-100">
+                <div className="card cardx border border-5 border-start-0 border-end-0 border-bottom-0 border-top-1 border-warning shadow h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center justify-content-between mb-3">
                       <h6 className="text-muted fw-semibold mb-0">Today Sales</h6>

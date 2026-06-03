@@ -31,12 +31,12 @@ const BookCategory = () => {
                         <div class="form-group col-12  d-flex justify-content-center">
                             <div className='form-group w-50 '>
                                 <label htmlFor="" className='form-label'>Category title</label>
-                                <input type="text" className={`form-control form-control-sm ${errors.categoryName&&`is-invalid`}`} {...register('categoryName',{required:'*category name is required'})}/>
+                                <input type="text" className={`form-control form-control-sm ${errors.categoryTitle&&`is-invalid`}`} {...register('categoryTitle',{required:'*category name is required'})}/>
                                 <div className='invalid-feedback'>
-                                    {errors.categoryName?.message}
+                                    {errors.categoryTitle?.message}
                                 </div>
                                 <div className='d-flex justify-content-center mt-3 '>
-                                    <button type="submit" className='btn btn-primary btn-sm'>Add category</button>
+                                    <button type="submit" className='btn btn-danger btn-sm'>Add category</button>
                                 </div>
                             </div>                           
                         </div>                       

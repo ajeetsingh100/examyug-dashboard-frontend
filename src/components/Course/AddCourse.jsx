@@ -5,11 +5,14 @@ import { addCourse } from '../../services/operations/courseAPI'
 import toast from 'react-hot-toast'
 import { apiconnector } from '../../services/apiconnector'
 import { SERVER_API } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
+import { setEditCourse } from '../../slices/courseSlice'
 const AddCourse = () => {
     const {reset,handleSubmit,formState:{errors},register}=useForm()
     const [courseCategory,setCourseCategory]=useState([])
-    const {loading}=useSelector(state=>state.course)
+    const {loading,editCourse,course}=useSelector(state=>state.course)
     const dispatch=useDispatch()
+    const navigate=useNavigate()
 
     function handleFormData(form){
         const formData=new FormData()
@@ -17,19 +20,34 @@ const AddCourse = () => {
         formData.append('courseDescription',form.courseDescription)
         formData.append('maxPrice',form.maxPrice)
         formData.append('sellingPrice',form.sellingPrice)
-        formData.append('categoryName',form.categoryName)
+        formData.append('categoryID',form.category)
         formData.append('thumbnail',form.thumbnail[0])
         formData.append('timeDuration',form.timeDuration)
         formData.append('featured',form.featured)
         formData.append('courseDisplay',form.courseDisplay)
         formData.append('newBatch',form.newBatch)
-        dispatch(addCourse(formData))
+        dispatch(addCourse(formData,navigate))
         
+    }
+    function handleCancelEdit(){
+        dispatch(setEditCourse(false))
+        navigate('/course/view-all-courses')
     }
 
     useEffect(()=>{
+        console.log('editcourse called')
+        console.log(course)
+        if(editCourse&&courseCategory.length>0){
+            reset({
+                ...course,
+                category:course.category._id,
+                thumbnail:course.thumbnail
+            })
+        }
+    },[editCourse,courseCategory])
+    useEffect(()=>{
         async function loadCategory(){
-                    const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/course-category/get-all-category`)
+                    const response= await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/categories/get-all-categories`)
                     console.log(response)
                     if(response.data.success){
                         setCourseCategory(response.data.allCategories)
@@ -47,6 +65,9 @@ const AddCourse = () => {
     <div>
          <div className='container  mt-3 '>  
                 <h4>Add Course</h4>
+                { editCourse&&<div className='d-flex justify-content-end'>
+                     <button className="btn btn-sm btn-primary" onClick={handleCancelEdit}>Cancel Edit</button>
+                </div>}
                 <form className='mt-5   needs-validation shadow-lg bg-white ' noValidate  onSubmit={handleSubmit(handleFormData)}>
                     
                 <div className="row p-4 gy-3">
@@ -61,16 +82,16 @@ const AddCourse = () => {
                 </div>
                 <div className="form-group col-12 col-md-6">
                     <label htmlFor="inputEmail4" className='form-label'>Course category</label>
-                    <select name="" className={`form-select form-select-sm ${errors.categoryName&&`is-invalid`}`} {...register("categoryName",{required:"*please select a category"})} id="">
+                    <select name="" className={`form-select form-select-sm ${errors.category&&`is-invalid`}`} {...register("category",{required:"*please select a category"})} id="">
                         <option value=''>--select category---</option>
                         {
                             courseCategory?.map(category=>
-                                <option  key={category._id} value={category._id}>{category.categoryName}</option>
+                                <option  key={category._id} value={category._id}>{category.categoryTitle}</option>
                             )
                         }
                     </select>
                     <div className='invalid-feedback'>
-                        {errors.categoryName?.message}
+                        {errors.category?.message}
                     </div>
                 </div>
                 <div className="form-group  col-md-12">
@@ -184,7 +205,7 @@ const AddCourse = () => {
               </div>
             </div>
                 <div className='form-group mt-5 d-flex justify-content-center '>
-                    <button className='btn btn-primary btn-sm '>Add course</button>
+                    <button className='btn btn-danger btn-sm '>Add course</button>
                 </div>
             </div>
         </form>

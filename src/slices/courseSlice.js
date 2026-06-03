@@ -2,10 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
     editCourse:false,
-    allCourse:localStorage.getItem('allCourse')?JSON.parse(localStorage.getItem('allCourse')):null,
-    loading:false
+    course:localStorage.getItem('course')?JSON.parse(localStorage.getItem('course')):null,
+    loading:false,
+    searchBarLoader:false,
+    relay:1,
+    tableLoader:false
+  
 }
-
 const courseSlice=createSlice({
     name:'course',
     initialState:initialState,
@@ -15,9 +18,25 @@ const courseSlice=createSlice({
         },
         setLoading(state,action){
             state.loading=action.payload
+        },
+        setSearchBarLoader(state,action){
+            state.searchBarLoader=action.payload
+        },
+        setRelay(state,action){
+            state.relay=action.payload
+        },
+       setTableLoader(state,action){
+            state.tableLoader=action.payload
+        },
+        setEditCourse(state,action){
+            state.editCourse=action.payload
+        },
+        setCourse(state,action){
+            state.course=action.payload
         }
     }
 })
 
-export const { setAllCourse,setLoading}=courseSlice.actions
+export const { setAllCourse,setEditCourse, setLoading, 
+    setSearchBarLoader,setRelay,setTableLoader,setCourse}=courseSlice.actions
 export default courseSlice.reducer
