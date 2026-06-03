@@ -213,7 +213,7 @@ const ViewAllCourses = () => {
                             <td className=''>{course.category.categoryTitle}</td>
                             <td>₹{course.sellingPrice}</td>
                             <td className='d-flex gap-2'>
-                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedCourse(course)}><span className='bi bi-eye text-white'></span></button>
+                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal1" onClick={()=>handleSelectedCourse(course)}><span className='bi bi-eye text-white'></span></button>
                                 <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourse(course._id)}><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
@@ -254,11 +254,11 @@ const ViewAllCourses = () => {
             </div>
         </div>}
         {/* Modal */}
-        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="exampleModal1" tabIndex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">
-                    <h1 className="modal-title fs-5" id="exampleModalLabel">Course Details</h1>
+                    <h1 className="modal-title fs-5" id="exampleModalLabel1">Course Details</h1>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">

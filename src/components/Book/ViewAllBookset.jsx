@@ -29,8 +29,9 @@ const ViewAllBookset = () => {
     const {loading,searchBarLoader,relay,tableLoader}=useSelector(state=>state.bookset)
     const dispatch=useDispatch()
     
-    function handleSelectedCourse(course){
-        setViewSelectedBookset(course)
+    function handleSelectedBookset(bookset){
+        setViewSelectedBookset(bookset)      
+        console.log('bookset',bookset)  
     }
     function recordReset(){
        dispatch(setRelay(4))
@@ -205,7 +206,7 @@ const ViewAllBookset = () => {
                             <td className=''>{bookset.category.categoryTitle}</td>
                             <td>₹{bookset.sellingPrice}</td>
                             <td className='d-flex gap-2'>
-                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedCourse(bookset)}><span className='bi bi-eye text-white'></span></button>
+                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedBookset(bookset)}><span className='bi bi-eye text-white'></span></button>
                                 <button className="btn btn-sm btn-warning" ><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
@@ -267,18 +268,42 @@ const ViewAllBookset = () => {
                                     <strike className='small '>₹{viewSelectedBookset?.maxPrice}</strike>
                                     <span className='fw-semibold'>₹{viewSelectedBookset?.sellingPrice}</span>
                                 </p>
-                                {/* <p className="card-text d-flex gap-1">
-                                    {viewSelectedBook?.featured==='yes'&&<span className='badge rounded-0 bg-primary '>featured</span>}
-                                    {viewSelectedBook?.newBatch==='yes'&&<span className='badge rounded-0 bg-warning '>new batch</span>}
-                                    {viewSelectedBook?.courseDisplay==='yes'?<span className='badge rounded-0 bg-success '>Visible</span>:<span className='badge bg-danger'>Not visible</span>}
-                                </p> */}
-                            </div>
-                            
+                                            
+                            </div>                            
                             </div>
                             
                             <div className=' col-12 border-top py-2'>
                                 <span className='fw-semibold'>Description: </span> <span>{viewSelectedBookset?.booksetDescription}</span>
                             </div>
+                            <p className='card-text small fw-semibold'>Books Contains</p>
+                            <div style={{maxHeight:"200px",overflowY:'auto'}}>
+                                 <table className='table table-striped border'>
+                                    <thead className='position-sticky top-0 z-1 ' style={{backgroundColor:'#fff'}}>
+                                        <tr>
+                                            <th>Sr. no.</th>
+                                            <th>Book Name</th>
+                                        </tr>
+                                    </thead>
+                                    {
+                                        viewSelectedBookset?.bookList.length>0?
+                                        <tbody>
+                                             {viewSelectedBookset.bookList.map((book,index)=>
+                                                <tr>
+                                                    <td>{++index}</td>
+                                                    <td>{book.bookTitle}</td>
+                                                </tr>
+                                                )
+                                            }
+
+                                        </tbody>:
+                                        <tbody>
+                                            <tr>
+                                                <td colSpan={2} className='text-center'>No books are added</td>
+                                            </tr>
+                                        </tbody>                                      
+                                    }
+                                </table>
+                            </div>           
                         </div>
                     </div>                                      
                 </div>

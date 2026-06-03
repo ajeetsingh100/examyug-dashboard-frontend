@@ -8,6 +8,7 @@ import { SERVER_API } from '../../services/api'
 const ViewAllBookCategories = () => {
  const {loading,tableLoader}=useSelector(state=>state.book)
      const [counter,setCounter]=useState(1)
+     const [viewSelectedCategory,setViewSelectedCategory]=useState()
      const [limit,setLimit]=useState(5)
      const [totalPages,setTotalPages]=useState()
      const dispatch=useDispatch()
@@ -28,7 +29,10 @@ const ViewAllBookCategories = () => {
          dispatch(setTableLoader(false))
          console.log(response.data.allCategories)
      }
- 
+     function handleSelectedCategory(category){
+        setViewSelectedCategory(category)
+        console.log('handle selected category called',category)
+     }
  
      useEffect(()=>{initialCategoryLoader()},[])
      useEffect(()=>{loadCategories()},[limit,counter])
@@ -59,7 +63,7 @@ const ViewAllBookCategories = () => {
                                          <td>{category.categoryTitle}</td>
                                          <td>{category.books.length}</td>                                        
                                          <td className='d-flex gap-1'>
-                                             <button className="btn btn-sm btn-primary"><span className='bi bi-eye'></span></button>
+                                             <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2" onClick={()=>handleSelectedCategory(category)}><span className='bi bi-eye'></span></button>
                                              <button className="btn btn-sm btn-warning"> <span className='bi bi-pencil'></span></button>
                                              <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                                          </td>
@@ -93,6 +97,62 @@ const ViewAllBookCategories = () => {
              </div>
          </div>}
          </div>
+         {/* Modal */}
+          <div className="modal fade" id="exampleModal2" tabIndex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                <div className="modal-header">
+                    <h1 className="modal-title fs-5" id="exampleModalLabel2">Category Details</h1>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                    <div className="card mb-3 border  p-2" style={{maxWidth: "540px"}}>
+                        <div className="row g-2">
+                            
+                            <div className="col-12 mb-1">
+                            <div className="card-body">
+                                <h5 className="card-title">{viewSelectedCategory?.categoryTitle} </h5>
+                                <p className="card-text small">Books Contains</p>
+                            <div style={{maxHeight:"200px",overflowY:'auto'}}>
+                                 <table className='table table-striped border'>
+                                    <thead className='position-sticky top-0 z-1 ' style={{backgroundColor:'#fff'}}>
+                                        <tr>
+                                            <th>Sr. no.</th>
+                                            <th>Book Name</th>
+                                        </tr>
+                                    </thead>
+                                    {
+                                        viewSelectedCategory?.books.length>0?
+                                        <tbody>
+                                             {viewSelectedCategory.books.map((book,index)=>
+                                                <tr>
+                                                    <td>{++index}</td>
+                                                    <td>{book.bookTitle}</td>
+                                                </tr>
+                                                )
+                                            }
+
+                                        </tbody>:
+                                        <tbody>
+                                            <tr>
+                                                <td colSpan={2} className='text-center'>No books are added</td>
+                                            </tr>
+                                        </tbody>                                      
+                                    }
+                                </table>
+                            </div>
+                               
+                        </div>
+                            
+                     </div>                            
+                         
+                        </div>
+                    </div>                                      
+                </div>
+
+                </div>
+            </div>
+        </div>
      </div>
    )
 }

@@ -174,7 +174,7 @@ const ViewAllBooks = () => {
                     <option value="" categoryName={''}>--select-category--</option>
                 {
                     categories.map(category=>
-                        <option key={category._id} value={category._id}>{category.categoryTitle}</option>
+                        <option key={category._id} value={category._id}>{category?.categoryTitle}</option>
                     )
                 }
                 </select>
@@ -203,7 +203,7 @@ const ViewAllBooks = () => {
                         <tr key={book._id}>
                             <td>{book.serial_no}</td>
                             <td>{book.bookTitle}</td>
-                            <td className=''>{book.category.categoryTitle}</td>
+                            <td className=''>{book?.category.categoryTitle}</td>
                             <td>₹{book.sellingPrice}</td>
                             <td className='d-flex gap-2'>
                                 <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedCourse(book)}><span className='bi bi-eye text-white'></span></button>
@@ -268,11 +268,7 @@ const ViewAllBooks = () => {
                                     <strike className='small '>₹{viewSelectedBook?.maxPrice}</strike>
                                     <span className='fw-semibold'>₹{viewSelectedBook?.sellingPrice}</span>
                                 </p>
-                                {/* <p className="card-text d-flex gap-1">
-                                    {viewSelectedBook?.featured==='yes'&&<span className='badge rounded-0 bg-primary '>featured</span>}
-                                    {viewSelectedBook?.newBatch==='yes'&&<span className='badge rounded-0 bg-warning '>new batch</span>}
-                                    {viewSelectedBook?.courseDisplay==='yes'?<span className='badge rounded-0 bg-success '>Visible</span>:<span className='badge bg-danger'>Not visible</span>}
-                                </p> */}
+                                
                             </div>
                             
                             </div>
