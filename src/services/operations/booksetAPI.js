@@ -50,12 +50,12 @@ export const updateBookset=(formData,navigate)=>{
     return async(dispatch)=>{
         const toastID=toast.loading('Modifying bookset details...')
         try {
-            const response=await apiconnector('POST','http://localhost:4000/api/v1/bookset/edit-bookset',formData)
-            toast.success('Course successfully modified',{id:toastID})
+            const response=await apiconnector('POST',`${SERVER_API.MAIN_SERVER}/api/v1/bookset/edit-bookset`,formData)
+            toast.success('Bookset successfully modified',{id:toastID})
             navigate('/bookset/view-all-booksets') 
             dispatch(setEditBookset(false))           
         } catch (error) {
-            toast.error('Unable to modify course details!!',{id:toastID})
+            toast.error(error.response.data.message,{id:toastID})
             console.log(error.response.data)
         }
     }
