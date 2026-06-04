@@ -21,7 +21,7 @@ export const updateCategory=(formData,navigate)=>{
     return async(dispatch)=>{
         const toastID=toast.loading('Modifying category details...')
         try {
-            const response=await apiconnector('POST','http://localhost:4000/api/v1/book/edit-category',formData)
+            const response=await apiconnector('POST',`${SERVER_API.MAIN_SERVER}/api/v1/book/edit-category`,formData)
             toast.success('Course successfully modified',{id:toastID})
             navigate('/categories/view-all-categories/book')
             dispatch(setEditBookCategory(false))

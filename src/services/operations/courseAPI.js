@@ -22,7 +22,7 @@ export const updateCourse=(formData,navigate)=>{
     return async(dispatch)=>{
         const toastID=toast.loading('Modifying course details...')
         try {
-            const response=await apiconnector('POST','http://localhost:4000/api/v1/course/edit-course',formData)
+            const response=await apiconnector('POST',`${SERVER_API.MAIN_SERVER}/api/v1/course/edit-course`,formData)
             toast.success('Course successfully modified',{id:toastID})
             navigate('/course/view-all-courses')
             dispatch(setEditCourse(false))
