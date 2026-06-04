@@ -3,15 +3,17 @@ import { apiconnector } from "../apiconnector"
 import { SERVER_API } from "../api"
 import { setEditBookset, setLoading, setSearchBarLoader } from "../../slices/booksetSlice"
 
-export const addBookset=(formData)=>{
+export const addBookset=(formData,navigate)=>{
     return async(dispatch)=>{
         const toastID=toast.loading('We are creating your bookset please wait...')
         dispatch(setLoading(true))
         try {
-            await apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/bookset/add-bookset`,formData)
+            const response=await apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/bookset/add-bookset`,formData)
+            console.log(response)
             toast.success('Bookset added successfully',{id:toastID})
+            navigate('/bookset/view-all-booksets')
         } catch (error) {
-            toast.error('Something went wrong',{id:toastID})
+            toast.error(error.response.data.message,{id:toastID})
             console.log('addBookset API',error)
         }
         dispatch(setLoading(false))
@@ -46,7 +48,7 @@ export const searchBook=(keyword,page,limit)=>{
 
 export const updateBookset=(formData,navigate)=>{
     return async(dispatch)=>{
-        const toastID=toast.loading('Modifying course details...')
+        const toastID=toast.loading('Modifying bookset details...')
         try {
             const response=await apiconnector('POST','http://localhost:4000/api/v1/bookset/edit-bookset',formData)
             toast.success('Course successfully modified',{id:toastID})

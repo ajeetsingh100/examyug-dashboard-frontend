@@ -10,10 +10,10 @@ export const addBook=(formData,navigate)=>{
         try {
 
             await apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/book/add-book`,formData)
-
             toast.success('Your book is added successfully!!!',{id:toastID})
             navigate('/book/view-all-books')
         } catch (error) {
+            //  GOOD PRACTICE TO DISPLAY ERROR
             toast.error(error.response.data.message,{id:toastID})
             console.error('addBook API',error)
         }

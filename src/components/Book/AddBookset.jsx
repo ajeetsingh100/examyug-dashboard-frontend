@@ -24,14 +24,15 @@ const AddBookset = () => {
         if(editBookset&&Object.keys(dirtyFields).length!==0){
             const updates={}
             Object.keys(dirtyFields).forEach(key=>{
-                if(key!=='thumbnail')
-                updates[key]=form[key]
+                 if(key === 'thumbnail') return
+                if(key === 'bookList'){
+                    updates.bookList = form.bookList.map(
+                        book => book._id
+                    )
+                    return
+                }
 
-             if(key === 'bookList'){
-                updates.bookList = form.bookList.map(
-                    book => book._id
-                )
-            }
+                updates[key] = form[key]
             })
             
             formData.append('updates',JSON.stringify(updates))    
@@ -43,12 +44,12 @@ const AddBookset = () => {
         const bookList=form.bookList.map(book=>book._id)
         formData.append('booksetTitle',form.booksetTitle)
         formData.append('booksetDescription',form.booksetDescription)
-        formData.append('thumbnail',form.thumbnail[0])
+        formData.append('thumbnail',form.thumbnail)
         formData.append('sellingPrice',form.sellingPrice)
         formData.append('maxPrice',form.maxPrice)
         formData.append('categoryID',form.category) 
         formData.append('bookList',JSON.stringify(bookList))        
-        dispatch(addBookset(formData))
+        dispatch(addBookset(formData,navigate))
     }
    
     //useEffect(()=>{console.log('dirtyFields:',dirtyFields)},[dirtyFields])
@@ -67,7 +68,15 @@ const AddBookset = () => {
             loadCategories()
         }        
         if(!loading){
-            reset()           
+            reset({
+                 booksetTitle:'',
+                 booksetDescription:'',
+                 thumbnail:null,
+                 category:'',
+                 bookList:[],
+                 maxPrice:'',
+                 sellingPrice:''
+            })           
         }
         
     },[loading])

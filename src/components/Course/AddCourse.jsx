@@ -35,7 +35,7 @@ const AddCourse = () => {
         formData.append('maxPrice',form.maxPrice)
         formData.append('sellingPrice',form.sellingPrice)
         formData.append('categoryID',form.category)
-        formData.append('thumbnail',form.thumbnail[0])
+        formData.append('thumbnail',form.thumbnail)
         formData.append('timeDuration',form.timeDuration)
         formData.append('featured',form.featured)
         formData.append('courseDisplay',form.courseDisplay)
@@ -50,19 +50,17 @@ const AddCourse = () => {
         
     }
 
-    useEffect(()=>{
-      
-        if(navigated){
-              console.log('editcourse called')
-        console.log(course)
+    useEffect(()=>{    
+       
+            console.log('editcourse called')
+            console.log(course)
             if(editCourse&&courseCategory.length>0){
             reset({
                 ...course,
                 category:course.category._id,
                 thumbnail:course.thumbnail
             })
-        }
-        }
+         }    
         if(!editCourse){
             reset()
         }

@@ -34,14 +34,14 @@ const AddBook = () => {
             dispatch(updateBook(formData,navigate))
             return
                 }
-            console.log(form.thumbnail[0])
+            console.log(form.thumbnail)
             formData.append('bookTitle',form.bookTitle)
             formData.append('bookDescription',form.bookDescription)
             formData.append('maxPrice',form.maxPrice)
             formData.append('sellingPrice',form.sellingPrice)
-            formData.append('thumbnail',form.thumbnail[0])
+            formData.append('thumbnail',form.thumbnail)
             formData.append('categoryID',form.category)
-            formData.append('demoPdf',form.demoPdf[0])
+            formData.append('demoPdf',form.demoPdf)
             dispatch(addBook(formData,navigate))  
             
     }
