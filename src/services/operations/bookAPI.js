@@ -1,6 +1,6 @@
 import toast from "react-hot-toast"
 import { apiconnector } from "../apiconnector"
-import { setLoading, setSearchBarLoader } from "../../slices/bookSlice"
+import { setEditBook, setLoading, setSearchBarLoader } from "../../slices/bookSlice"
 import { SERVER_API } from "../api"
 
 export const addBook=(formData,navigate)=>{
@@ -49,3 +49,17 @@ export const searchBook=(keyword,page,limit)=>{
     }
 }
 
+export const updateBook=(formData,navigate)=>{
+    return async(dispatch)=>{
+        const toastID=toast.loading('Modifying course details...')
+        try {
+            const response=await apiconnector('POST','http://localhost:4000/api/v1/book/edit-book',formData)
+            toast.success('Course successfully modified',{id:toastID})
+            navigate('/book/view-all-books')
+            dispatch(setEditBook(false))
+        } catch (error) {
+            toast.error('Unable to modify course details!!',{id:toastID})
+            console.log(error.response.data)
+        }
+    }
+}

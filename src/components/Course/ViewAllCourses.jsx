@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { apiconnector } from '../../services/apiconnector'
 import { SERVER_API } from '../../services/api'
 import { useDispatch, useSelector } from 'react-redux'
-import {setLoading, setSearchBarLoader,setRelay,setTableLoader,setEditCourse,setCourse} from '../../slices/courseSlice'
+import {setLoading, setSearchBarLoader,setRelay,setTableLoader,setEditCourse,setCourse,setNavigated} from '../../slices/courseSlice'
 import { searchCourse } from '../../services/operations/courseAPI'
 import toast from 'react-hot-toast'
 import Loader from '../../pages/Loader'
@@ -15,7 +15,6 @@ const ViewAllCourses = () => {
     // RELATED TO PAGINATION STATE
     const [keyword,setKeyword]=useState('')
     const searchBox=useRef()
-  
     const [counter,setCounter]=useState(1)    
     const [categorySelected,setCategorySelected]=useState('')
     const [categoryHistory,setCategoryHistory]=useState('')
@@ -41,10 +40,10 @@ const ViewAllCourses = () => {
        categoryPaneRef.current.value=''
        setShowSearchItemFlag(false)
     }
-    async function handleEditCourse(courseID){
-        const response=await apiconnector('post',`${SERVER_API.MAIN_SERVER}/api/v1/course/get-course`,{courseID})
-        dispatch(setCourse(response.data.course))
+    async function handleEditCourse(course){
+        dispatch(setCourse(course))
         dispatch(setEditCourse(true))
+        dispatch(setNavigated(true))
         navigate('/course/create-course')
     }
     async function handleCategorySearch(){
@@ -214,7 +213,7 @@ const ViewAllCourses = () => {
                             <td>₹{course.sellingPrice}</td>
                             <td className='d-flex gap-2'>
                                 <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal1" onClick={()=>handleSelectedCourse(course)}><span className='bi bi-eye text-white'></span></button>
-                                <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourse(course._id)}><span className='bi bi-pencil'></span></button>
+                                <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourse(course)}><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
                         </tr>

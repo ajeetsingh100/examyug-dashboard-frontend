@@ -1,21 +1,35 @@
 import React, {  useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCourse } from '../../services/operations/courseAPI'
+import { addCourse, updateCourse } from '../../services/operations/courseAPI'
 import toast from 'react-hot-toast'
 import { apiconnector } from '../../services/apiconnector'
 import { SERVER_API } from '../../services/api'
 import { useNavigate } from 'react-router-dom'
-import { setEditCourse } from '../../slices/courseSlice'
+import { setEditCourse, setNavigated } from '../../slices/courseSlice'
+import FileUploadCourseThumbnail from '../FileUpload/FileUploadCourseThumbnail'
+
 const AddCourse = () => {
-    const {reset,handleSubmit,formState:{errors},register}=useForm()
+    const {reset,handleSubmit,formState:{errors,dirtyFields},register,control}=useForm()
     const [courseCategory,setCourseCategory]=useState([])
-    const {loading,editCourse,course}=useSelector(state=>state.course)
+    const {loading,editCourse,course,navigated}=useSelector(state=>state.course)
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
     function handleFormData(form){
         const formData=new FormData()
+         if(editCourse&&Object.keys(dirtyFields).length!==0){
+            const updates={}
+            Object.keys(dirtyFields).forEach(key=>{
+                if(key!=='thumbnail')
+                updates[key]=form[key]
+            })
+            formData.append('updates',JSON.stringify(updates))
+            formData.append('courseID',course._id)
+            formData.append('thumbnail',form.thumbnail)
+            dispatch(updateCourse(formData,navigate))
+            return
+        }
         formData.append('courseTitle',form.courseTitle)
         formData.append('courseDescription',form.courseDescription)
         formData.append('maxPrice',form.maxPrice)
@@ -31,18 +45,26 @@ const AddCourse = () => {
     }
     function handleCancelEdit(){
         dispatch(setEditCourse(false))
+        dispatch(setNavigated(false))
         navigate('/course/view-all-courses')
+        
     }
 
     useEffect(()=>{
-        console.log('editcourse called')
+      
+        if(navigated){
+              console.log('editcourse called')
         console.log(course)
-        if(editCourse&&courseCategory.length>0){
+            if(editCourse&&courseCategory.length>0){
             reset({
                 ...course,
                 category:course.category._id,
                 thumbnail:course.thumbnail
             })
+        }
+        }
+        if(!editCourse){
+            reset()
         }
     },[editCourse,courseCategory])
     useEffect(()=>{
@@ -109,8 +131,24 @@ const AddCourse = () => {
                           {errors.timeDuration?.message}
                     </div>
             </div>
-             
-            <div className="form-group col-12 col-md-6">
+            
+            <div>
+            <label className='form-label'>Add course thumbnail</label> </div>       
+            <div className='form-group col-12 d-flex justify-content-center'>   
+               
+               <div className='w-50'>
+                 <Controller
+                    name='thumbnail'
+                    control={control}              
+                    render={({field})=>
+                    <FileUploadCourseThumbnail value={field.value} 
+                            onChange={field.onChange} 
+                            accept={{"image/jpeg":[],"image/jpg":[],"image/png":[]}}/>} 
+                    />
+               </div>
+            </div>
+           
+            {/* <div className="form-group col-12 col-md-6">
                     <label htmlFor="inputAddress2" className='form-label'>Thumbnail</label>
                     <input type="file" className={`form-control form-control-sm ${errors.thumbnail&&`is-invalid`}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
                     {...register("thumbnail",
@@ -131,7 +169,7 @@ const AddCourse = () => {
                     <div className='invalid-feedback'>
                         {errors.thumbnail?.message}
                     </div>
-            </div>         
+            </div>          */}
                 
                 <h4 className='mt-5'>Course Pricing</h4>
                 <hr />
@@ -205,7 +243,14 @@ const AddCourse = () => {
               </div>
             </div>
                 <div className='form-group mt-5 d-flex justify-content-center '>
-                    <button className='btn btn-danger btn-sm '>Add course</button>
+                    {
+                        editCourse?
+                            Object.keys(dirtyFields).length!==0?
+                                <button  className='btn btn-warning btn-sm'>Update Course</button>:
+                                null
+                            :<button className='btn btn-danger btn-sm'>Save & Next</button>
+                    }
+                   
                 </div>
             </div>
         </form>

@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { apiconnector } from '../../services/apiconnector'
 import { SERVER_API } from '../../services/api'
 import { useDispatch, useSelector } from 'react-redux'
-import {setLoading, setSearchBarLoader,setRelay,setTableLoader} from '../../slices/booksetSlice'
+import {setLoading, setSearchBarLoader,setRelay,setTableLoader, setBookset, setEditBookset} from '../../slices/booksetSlice'
 import { searchBookset } from '../../services/operations/booksetAPI'
 import toast from 'react-hot-toast'
 import Loader from '../../pages/Loader'
+import { useNavigate } from 'react-router-dom'
 
 const ViewAllBookset = () => {
     const [booksets,setBooksets]=useState([])
@@ -24,6 +25,7 @@ const ViewAllBookset = () => {
     const [displayPaginationFlag,setDisplayPaginationFlag]=useState(false)
     const [searchKeywordFlag,setSearchKeywordFlag]=useState(false)
     const [showSearchItemFlag,setShowSearchItemFlag]=useState(false)
+    const navigate=useNavigate()
     
 
     const {loading,searchBarLoader,relay,tableLoader}=useSelector(state=>state.bookset)
@@ -145,10 +147,15 @@ const ViewAllBookset = () => {
             default:console.log('none of the case matched')
         }   
     },[limit])
+    function handleEditBookset(bookset){
+        dispatch(setBookset(bookset))
+        dispatch(setEditBookset(true))
+        navigate('/bookset/add-bookset')
+    }
     return (
     <div>
         <div>
-            <h4>View All Courses</h4>
+            <h4>View All Booksets</h4>
         </div>
         <div className='d-flex justify-content-between'>
             <div>
@@ -207,7 +214,7 @@ const ViewAllBookset = () => {
                             <td>₹{bookset.sellingPrice}</td>
                             <td className='d-flex gap-2'>
                                 <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedBookset(bookset)}><span className='bi bi-eye text-white'></span></button>
-                                <button className="btn btn-sm btn-warning" ><span className='bi bi-pencil'></span></button>
+                                <button className="btn btn-sm btn-warning" onClick={()=>handleEditBookset(bookset)} ><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
                         </tr>
@@ -272,7 +279,7 @@ const ViewAllBookset = () => {
                             </div>                            
                             </div>
                             
-                            <div className=' col-12 border-top py-2'>
+                            <div className='col-12 border-top py-2'>
                                 <span className='fw-semibold'>Description: </span> <span>{viewSelectedBookset?.booksetDescription}</span>
                             </div>
                             <p className='card-text small fw-semibold'>Books Contains</p>

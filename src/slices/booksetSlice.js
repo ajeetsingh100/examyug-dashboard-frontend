@@ -4,8 +4,8 @@ const initialState={
     loading:false,
     searchBarLoader:false,
     relay:false,
-    tableLoader:false,
-    editBookset:false
+    editBookset:false,
+    bookset:{}
 }
 
 const booksetSlice=createSlice({
@@ -26,10 +26,13 @@ const booksetSlice=createSlice({
         },
         setEditBookset(state,action){
             state.editBookset=action.payload
+        },
+        setBookset(state,action){
+            state.bookset=action.payload
         }
 
     }
 })
 
-export const { setLoading,setSearchBarLoader,setRelay,setTableLoader,setEditBookset}=booksetSlice.actions
+export const { setLoading,setSearchBarLoader,setRelay,setTableLoader,setEditBookset,setBookset}=booksetSlice.actions
 export default booksetSlice.reducer

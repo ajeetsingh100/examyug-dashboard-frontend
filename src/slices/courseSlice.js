@@ -6,7 +6,8 @@ const initialState={
     loading:false,
     searchBarLoader:false,
     relay:1,
-    tableLoader:false
+    tableLoader:false,
+    navigated:false
   
 }
 const courseSlice=createSlice({
@@ -33,10 +34,13 @@ const courseSlice=createSlice({
         },
         setCourse(state,action){
             state.course=action.payload
+        },
+         setNavigated(state,action){
+            state.navigated=action.payload
         }
     }
 })
 
 export const { setAllCourse,setEditCourse, setLoading, 
-    setSearchBarLoader,setRelay,setTableLoader,setCourse}=courseSlice.actions
+    setSearchBarLoader,setRelay,setTableLoader,setCourse,setNavigated}=courseSlice.actions
 export default courseSlice.reducer

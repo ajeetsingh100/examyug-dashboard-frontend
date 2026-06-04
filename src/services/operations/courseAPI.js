@@ -1,6 +1,6 @@
 import toast from "react-hot-toast"
 import { apiconnector } from "../apiconnector"
-import { setLoading,setSearchBarLoader } from "../../slices/courseSlice"
+import { setEditCourse, setLoading,setSearchBarLoader } from "../../slices/courseSlice"
 import { SERVER_API } from "../api"
 
 export const addCourse=(formData,navigate)=>{
@@ -16,6 +16,21 @@ export const addCourse=(formData,navigate)=>{
             console.error('add-course API ',error)
         }
         dispatch(setLoading(false))
+    }
+}
+export const updateCourse=(formData,navigate)=>{
+    return async(dispatch)=>{
+        const toastID=toast.loading('Modifying course details...')
+        try {
+            const response=await apiconnector('POST','http://localhost:4000/api/v1/course/edit-course',formData)
+            toast.success('Course successfully modified',{id:toastID})
+            navigate('/course/view-all-courses')
+            dispatch(setEditCourse(false))
+            
+        } catch (error) {
+            toast.error('Unable to modify course details!!',{id:toastID})
+            console.log(error.response.data)
+        }
     }
 }
 

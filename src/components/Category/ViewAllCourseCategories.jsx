@@ -4,17 +4,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { apiconnector } from '../../services/apiconnector'
 import { setLoading,setTableLoader } from '../../slices/courseSlice'
 import { SERVER_API } from '../../services/api'
+import {setCategory,setEditCourseCategory} from '../../slices/courseCategorySlice'
+import { useNavigate } from 'react-router-dom'
 const ViewAllCourseCategories = () => {
     const {loading,tableLoader}=useSelector(state=>state.course)
+    const {editCourseCategory,category}=useSelector(state=>state.courseCategory)
     const [counter,setCounter]=useState(1)
     const [viewSelectedCategory,setViewSelectedCourse]=useState()
     const [limit,setLimit]=useState(5)
     const [totalPages,setTotalPages]=useState()
     const dispatch=useDispatch()
     const [categories,setCategories]=useState([])
+    const navigate=useNavigate()
     async function initialCategoryLoader(){
         dispatch(setLoading(true))
-        const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/categories/view-all-categories?page=${1}&limit${5}`)
+        const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/categories/view-all-categories?page=${counter}&limit=${limit}`)
         setCategories(response.data.allCategories)
         setTotalPages(response.data.totalPages)
         dispatch(setLoading(false))
@@ -22,7 +26,7 @@ const ViewAllCourseCategories = () => {
     }
       async function loadCategories(){
         dispatch(setTableLoader(true))
-        const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/categories/view-all-categories?page=${1}&limit${5}`)
+        const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/categories/view-all-categories?page=${counter}&limit=${limit}`)
         setCategories(response.data.allCategories)
         setTotalPages(response.data.totalPages)
         dispatch(setTableLoader(false))
@@ -31,7 +35,11 @@ const ViewAllCourseCategories = () => {
     function handleViewSelectedCategory(category){
         setViewSelectedCourse(category)
     }
-
+    function handleEditCourseCategory(category){
+        dispatch(setCategory(category))
+        dispatch(setEditCourseCategory(true))
+        navigate('/categories/course/add-category')
+    }
     useEffect(()=>{initialCategoryLoader()},[])
     useEffect(()=>{loadCategories()},[limit,counter])
   return (
@@ -57,12 +65,12 @@ const ViewAllCourseCategories = () => {
                             {
                                 categories.map((category,index)=>
                                     <tr>
-                                        <td>{++index}</td>
+                                        <td>{category.serial_no}</td>
                                         <td>{category.categoryTitle}</td>
                                         <td>{category.courses.length}</td>                                        
                                         <td className='d-flex gap-1'>
                                             <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3" onClick={()=>handleViewSelectedCategory(category)}><span className='bi bi-eye'></span></button>
-                                            <button className="btn btn-sm btn-warning"> <span className='bi bi-pencil'></span></button>
+                                            <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourseCategory(category)}> <span className='bi bi-pencil' ></span></button>
                                             <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                                         </td>
                                     </tr>

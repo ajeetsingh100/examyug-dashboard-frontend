@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { apiconnector } from '../../services/apiconnector'
 import { SERVER_API } from '../../services/api'
 import { useDispatch, useSelector } from 'react-redux'
-import {setLoading, setSearchBarLoader,setRelay,setTableLoader} from '../../slices/bookSlice'
+import {setLoading, setSearchBarLoader,setRelay,setTableLoader, setEditBook,setBook} from '../../slices/bookSlice'
 import { searchBook } from '../../services/operations/bookAPI'
 import toast from 'react-hot-toast'
 import Loader from '../../pages/Loader'
+import { useNavigate } from 'react-router-dom'
+import { setNavigated } from '../../slices/bookSlice'
 
 const ViewAllBooks = () => {
     const [books,setBooks]=useState([])
@@ -14,7 +16,7 @@ const ViewAllBooks = () => {
     // RELATED TO PAGINATION STATE
     const [keyword,setKeyword]=useState('')
     const searchBox=useRef()
-  
+    const navigate=useNavigate()
     const [counter,setCounter]=useState(1)    
     const [categorySelected,setCategorySelected]=useState('')
     const [categoryHistory,setCategoryHistory]=useState('')
@@ -31,6 +33,12 @@ const ViewAllBooks = () => {
     
     function handleSelectedCourse(course){
         setViewSelectedBook(course)
+    }
+    function handleEditBook(book){
+        dispatch(setBook(book))
+        dispatch(setEditBook(true))
+        dispatch(setNavigated(true))
+        navigate('/book/add-book')
     }
 
     function recordReset(){
@@ -148,7 +156,7 @@ const ViewAllBooks = () => {
     return (
     <div>
         <div>
-            <h4>View All Courses</h4>
+            <h4>View All Books</h4>
         </div>
         <div className='d-flex justify-content-between'>
             <div>
@@ -207,7 +215,7 @@ const ViewAllBooks = () => {
                             <td>₹{book.sellingPrice}</td>
                             <td className='d-flex gap-2'>
                                 <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedCourse(book)}><span className='bi bi-eye text-white'></span></button>
-                                <button className="btn btn-sm btn-warning"><span className='bi bi-pencil'></span></button>
+                                <button className="btn btn-sm btn-warning" onClick={()=>handleEditBook(book)}><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
                         </tr>

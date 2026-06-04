@@ -1,18 +1,52 @@
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { addCategory } from '../../services/operations/bookCategories'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { addCategory, updateCategory } from '../../services/operations/bookCategories'
+import { useNavigate } from 'react-router-dom'
+import {setEditBookCategory} from '../../slices/bookCategorySlice'
 
 const BookCategory = () => {
-    const {register,handleSubmit,formState:{errors}}=useForm()
+    const {register,handleSubmit,reset,formState:{errors,dirtyFields}}=useForm()
+    const {category,editBookCategory}=useSelector(state=>state.bookCategory)
     const dispatch=useDispatch()
+    const navigate=useNavigate()
    
 
-    function handleFormData(formData){
+    function handleFormData(form){
+        const formData=new FormData
+        if(editBookCategory&&Object.keys(dirtyFields).length!==0){
+            const updates={}
+            Object.keys(dirtyFields).forEach(key=>{
+                if(key!=='thumbnail')
+                updates[key]=form[key]
+            })
+            formData.append('updates',JSON.stringify(updates))
+            formData.append('categoryID',category._id)            
+            dispatch(updateCategory(formData,navigate))
+            return
+        }
+
         console.log(formData)
-        dispatch(addCategory(formData))
+        dispatch(addCategory(form,navigate))
     }
+    
+    function handleCancelEditBookCategory(){        
+        dispatch(setEditBookCategory(false))
+        navigate('/categories/view-all-categories/book')
+    }
+    
+        useEffect(()=>{
+            console.log('book category: ',category)
+            console.log(editBookCategory)
+            if(editBookCategory){
+                reset({
+                    ...category
+                })
+            }
+            if(!editBookCategory){
+                reset()
+            }
+        },[editBookCategory])
 
   return (
     <div>
@@ -20,6 +54,9 @@ const BookCategory = () => {
             <h4>
                 Add Book Category
             </h4>
+            { editBookCategory&&<div className='d-flex justify-content-end'>
+                     <button className="btn btn-sm btn-primary" onClick={handleCancelEditBookCategory}>Cancel Edit</button>
+                </div>}
 
             {/* Books form */}
             <div>
@@ -36,7 +73,13 @@ const BookCategory = () => {
                                     {errors.categoryTitle?.message}
                                 </div>
                                 <div className='d-flex justify-content-center mt-3 '>
-                                    <button type="submit" className='btn btn-danger btn-sm'>Add category</button>
+                                   {
+                                    editBookCategory?
+                                        Object.keys(dirtyFields).length!==0?
+                                            <button  className='btn btn-warning btn-sm'>Update Category</button>:
+                                            null
+                                        :<button className='btn btn-danger btn-sm'>Add Category</button>
+                                }
                                 </div>
                             </div>                           
                         </div>                       

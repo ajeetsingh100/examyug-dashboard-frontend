@@ -4,19 +4,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
     editBook:false,
-    allBooks:localStorage.getItem('allBooks')?JSON.parse(localStorage.getItem('allBooks')):null,
+    book:localStorage.getItem('book')?JSON.parse(localStorage.getItem('book')):null,
     loading:false,
     tableLoader:false,
     searchBarLoader:false,
-    relay:false
+    relay:false,
+    navigated:false
 }
 
 const bookSlice=createSlice({
     name:'book',
     initialState:initialState,
     reducers:{
-        setAllBook(state,action){
-            state.allBooks=action.payload
+        setBook(state,action){
+            state.book=action.payload
         },
         setLoading(state,action){
             state.loading=action.payload
@@ -32,9 +33,12 @@ const bookSlice=createSlice({
         },
         setEditBook(state,action){
             state.editBook=action.payload
+        },
+        setNavigated(state,action){
+            state.navigated=action.payload
         }
     }
 })
 
-export const { setAllBook,setLoading,setTableLoader,setRelay,setSearchBarLoader,setEditBook}=bookSlice.actions
+export const { setAllBook,setLoading,setTableLoader,setRelay,setSearchBarLoader,setEditBook,setBook,setNavigated}=bookSlice.actions
 export default bookSlice.reducer

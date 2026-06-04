@@ -1,33 +1,49 @@
 import React, { useEffect, useState } from 'react'
-import {  useForm } from 'react-hook-form'
+import {  useForm, Controller } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { addBook } from '../../services/operations/bookAPI'
+import { addBook, updateBook } from '../../services/operations/bookAPI'
 import { apiconnector } from '../../services/apiconnector'
 import toast from 'react-hot-toast'
 import { SERVER_API } from '../../services/api'
 import { useNavigate } from 'react-router-dom'
+import FileUploadBookThumbnail from '../FileUpload/FileUpload'
+import FileUpload from '../FileUpload/FileUpload'
+import { setEditBook, setNavigated } from '../../slices/bookSlice'
 
 
 const AddBook = () => {
     const [bookCategory,setBookCategory]=useState([])    
-    const {reset,register,handleSubmit,formState:{errors}}=useForm()
-    const {loading}=useSelector(state=>state.book)
+    const {reset,register,handleSubmit,control,formState:{errors,dirtyFields}}=useForm()
+    const {loading,editBook,book,navigated}=useSelector(state=>state.book)
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
     function handleFormData(form){
     console.log('handleFormData function called!!!',form)
         const formData=new FormData()
-        console.log(form.thumbnail[0])
-        formData.append('bookTitle',form.bookTitle)
-        formData.append('bookDescription',form.bookDescription)
-        formData.append('maxPrice',form.maxPrice)
-        formData.append('sellingPrice',form.sellingPrice)
-        formData.append('thumbnail',form.thumbnail[0])
-        formData.append('categoryID',form.category)
-        formData.append('demoPdf',form.demoPdf[0])
-        dispatch(addBook(formData,navigate))  
-        
+        if(editBook&&Object.keys(dirtyFields).length!==0){
+            const updates={}
+            Object.keys(dirtyFields).forEach(key=>{
+                if(key!=='thumbnail'&&key!=='demoPdf')
+                updates[key]=form[key]
+            })
+            formData.append('updates',JSON.stringify(updates))
+            formData.append('bookID',book._id)
+            formData.append('thumbnail',form.thumbnail)
+            formData.append('demoPdf',form.demoPdf)
+            dispatch(updateBook(formData,navigate))
+            return
+                }
+            console.log(form.thumbnail[0])
+            formData.append('bookTitle',form.bookTitle)
+            formData.append('bookDescription',form.bookDescription)
+            formData.append('maxPrice',form.maxPrice)
+            formData.append('sellingPrice',form.sellingPrice)
+            formData.append('thumbnail',form.thumbnail[0])
+            formData.append('categoryID',form.category)
+            formData.append('demoPdf',form.demoPdf[0])
+            dispatch(addBook(formData,navigate))  
+            
     }
     /*----loading category------*/
     useEffect(()=>{
@@ -47,6 +63,26 @@ const AddBook = () => {
             reset()
          }
     },[loading])
+
+     useEffect(()=>{     
+         if(editBook&&bookCategory.length>0){
+            reset({
+                ...book,
+                category:book.category._id,
+                thumbnail:book.thumbnail,
+                demoPdf:book.demoPdf           
+            })
+        }
+        if(!editBook){
+            reset()
+        }
+    },[editBook,bookCategory])
+
+        function handleCancelEdit(){
+            dispatch(setEditBook(false))
+            dispatch(setNavigated(false))
+            navigate('/book/view-all-books')
+        }
     
   return (
     <div>
@@ -54,6 +90,9 @@ const AddBook = () => {
             <h4>
                 Add Books
             </h4>
+            { editBook&&<div className='d-flex justify-content-end'>
+                     <button className="btn btn-sm btn-primary" onClick={handleCancelEdit}>Cancel Edit</button>
+                </div>}
 
             {/* Books form */}
             <div>
@@ -89,60 +128,42 @@ const AddBook = () => {
                             <div className='invalid-feedback'>
                                 {errors.bookDescription?.message}
                             </div>
-                        </div>
-
-                        <div className="form-group col-12 col-md-6">
-                                <label htmlFor="inputAddress" className='form-label'>Demo link</label>
-                                <input type="file" className={`form-control form-control-sm ${errors.demoPdf&&'is-invalid'}`}id="inputPassword4"  placeholder='enter the course duration eg. 4 months/1 year ' 
-                                {...register('demoPdf',
-                                        {
-                                            required:"*demo pdf is required",
-                                            validate:{
-                                                checkType:(file)=>{
-                                                    const allowedTypes=['application/pdf']
-                                                    return (
-                                                        allowedTypes.includes(file[0].type)||'*only pdf file is allowed'
-                                                    )
-                                                },
-                                                checkSize:(file)=>{
-                                                    const size=file[0].size
-                                                    console.log(file[0].size)
-                                                    return(
-                                                        size<5242880||'*pdf size exceeded!! please upload pdf below size 5MB'
-                                                    )                                                
-                                                },
-                                                
-                                            }
-                                            
-                                            })} />
+                        </div>                       
+                            
+                        <div className='form-group col-12 col-md-6'>  
+                            <label className='form-label'>Add course thumbnail</label>                        
+                            <div>
                                 
+                                <Controller
+                                    name='thumbnail'
+                                    control={control}              
+                                    render={({field})=>
+                                    <FileUpload value={field.value} 
+                                            onChange={field.onChange} 
+                                            accept={{"image/jpeg":[],"image/jpg":[],"image/png":[]}} 
+                                            fileType='image'
+                                            />} 
+                                    />
+                            </div>                            
+                        </div>      
+                          <div className='form-group col-12 col-md-6'>  
+                            <label className='form-label'>Add demo link</label>                        
+                            <div>
                                 
-                                <div className='invalid-feedback'>
-                                    {errors.demoPdf?.message}
-                                </div>
-                        </div>
-                        <div className="form-group col-12 col-md-6">
-                                <label htmlFor="inputAddress2" className='form-label'>Thumbnail</label>
-                                <input type="file" className={`form-control form-control-sm  ${errors.thumbnail&&'is-invalid'}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
-                                {...register(
-                                            'thumbnail',
-                                            {
-                                                required:'book thumbnail is required',
-                                                validate:{
-                                                    checkFileType:(file)=>{
-                                                        const allowedTypes=['image/jpeg','image/jpg','image/png']
-                                                        return(
-                                                            allowedTypes.includes(file[0].type)|| `*only image type 'jpeg, jpg' are allowed`
-                                                        )
-                                                    }
-                                                }
-                                            })}/>
-                                
-                                <div className='invalid-feedback'>
-                                    {errors.thumbnail?.message}
-                                </div>
-                        </div>
-                               
+                                <Controller
+                                    name='demoPdf'
+                                    control={control}              
+                                    render={({field})=>
+                                    <FileUpload value={field.value} 
+                                            onChange={field.onChange} 
+                                            accept={{"application/pdf":[]}}
+                                            fileType='pdf'
+                                            />} 
+                                    />
+                            </div>                            
+                        </div>                   
+                      
+                       
                         
                         <h4 className='mt-5'>Book Pricing</h4>
                         <hr />
@@ -171,7 +192,13 @@ const AddBook = () => {
             
                        
                             <div className='form-group mt-5 d-flex justify-content-center '>
-                                <button type='submit' className='btn btn-danger btn-sm'>Add Book</button>
+                                {
+                                editBook?
+                                    Object.keys(dirtyFields).length!==0?
+                                        <button  className='btn btn-warning btn-sm'>Update Book</button>:
+                                        null
+                                    :<button className='btn btn-danger btn-sm'>Add Book</button>
+                                }
                             </div>
                     </div>
               </form>

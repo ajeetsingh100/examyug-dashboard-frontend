@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../../pages/Loader'
 import { apiconnector } from '../../services/apiconnector'
 import { setLoading, setTableLoader } from '../../slices/bookSlice'
+import { setEditBookCategory,setCategory } from '../../slices/bookCategorySlice'
 import { SERVER_API } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 const ViewAllBookCategories = () => {
  const {loading,tableLoader}=useSelector(state=>state.book)
@@ -13,9 +15,11 @@ const ViewAllBookCategories = () => {
      const [totalPages,setTotalPages]=useState()
      const dispatch=useDispatch()
      const [categories,setCategories]=useState([])
+     const navigate=useNavigate()
+
      async function initialCategoryLoader(){
          dispatch(setLoading(true))
-         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/view-all-categories?page=${1}&limit${5}`)
+         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/view-all-categories?page=${counter}&limit=${limit}`)
          setCategories(response.data.allCategories)
          setTotalPages(response.data.totalPages)
          dispatch(setLoading(false))
@@ -23,7 +27,7 @@ const ViewAllBookCategories = () => {
      }
        async function loadCategories(){
          dispatch(setTableLoader(true))
-         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/view-all-categories?page=${1}&limit${5}`)
+         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/book/categories/view-all-categories?page=${counter}&limit=${limit}`)
          setCategories(response.data.allCategories)
          setTotalPages(response.data.totalPages)
          dispatch(setTableLoader(false))
@@ -33,12 +37,18 @@ const ViewAllBookCategories = () => {
         setViewSelectedCategory(category)
         console.log('handle selected category called',category)
      }
+     function handleBookCategoryEdit(category){
+        dispatch(setEditBookCategory(true))
+        dispatch(setCategory(category))
+        navigate('/categories/book/add-category')
+     }
  
      useEffect(()=>{initialCategoryLoader()},[])
      useEffect(()=>{loadCategories()},[limit,counter])
    return (
      <div>
          <h4 className='mt-3'>View All Course Categories</h4>
+    
          <div>
              {
                  loading?<Loader/>:
@@ -59,12 +69,12 @@ const ViewAllBookCategories = () => {
                              {
                                  categories.map((category,index)=>
                                      <tr>
-                                         <td>{++index}</td>
+                                         <td>{category.serial_no}</td>
                                          <td>{category.categoryTitle}</td>
                                          <td>{category.books.length}</td>                                        
                                          <td className='d-flex gap-1'>
                                              <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2" onClick={()=>handleSelectedCategory(category)}><span className='bi bi-eye'></span></button>
-                                             <button className="btn btn-sm btn-warning"> <span className='bi bi-pencil'></span></button>
+                                             <button className="btn btn-sm btn-warning" onClick={()=>handleBookCategoryEdit(category)}> <span className='bi bi-pencil'></span></button>
                                              <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                                          </td>
                                      </tr>

@@ -4,85 +4,54 @@ import { SERVER_API } from '../../services/api'
 import toast from 'react-hot-toast'
 import { searchBook } from '../../services/operations/bookAPI'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoading } from '../../slices/bookSlice'
-import { useForm, Watch } from 'react-hook-form'
-import {addBookset} from '../../services/operations/booksetAPI'
+import { useForm, Watch, Controller } from 'react-hook-form'
+import {addBookset, updateBookset} from '../../services/operations/booksetAPI'
+import { setEditBookset, setLoading } from '../../slices/booksetSlice'
+import { useNavigate } from 'react-router-dom'
+import FileUploadBooksetThumbnail from '../FileUpload/FileUploadBooksetThumbnail'
+import BookList from './BookList'
 
 const AddBookset = () => {
-    const [categories,setCategories]=useState([])
-    const {loading}=useSelector(state=>state.book)
-    const {booksetLoading}=useSelector(state=>state.bookset)
-    const [searchedBooks,setSearchedBooks]=useState([])
-    const [bookExistFlag,setBookExistFlag]=useState(false)
-    const [bookSearchFlag,setBookSearchFlag]=useState(false)
-    const [counter,setCounter]=useState(1)
-    const [totalPages,setTotalPages]=useState(0)
-    const [totalRecords,setTotalRecords]=useState(0)
-    const [keyword,setKeyword]=useState('')
-    const [keywordFlag,setKeywordFlag]=useState(false)
-    const searchBox=useRef()
-    const [limit,setLimit]=useState(3)
-    const [tempBookList,setTempBookList]=useState([])
+    const [categories,setCategories]=useState([])    
+    const {loading,editBookset,bookset}=useSelector(state=>state.bookset)   
     const dispatch=useDispatch()
-    const {reset,handleSubmit,register,watch,formState:{errors}}=useForm()
+    const {reset,handleSubmit,register,watch,control,formState:{errors,dirtyFields}}=useForm()
     const maxPrice=watch('maxPrice')
     const sellingPrice=watch('sellingPrice')
-
-    async function handleBookSearch(){
-        const searched_keyword=searchBox.current.value
-        let page
-        setKeyword(searched_keyword)
-        if(keyword!==searched_keyword){
-            page=1
-            setCounter(1)
-        }else{
-            page=counter
-        }
-        if(!searched_keyword.trim()){
-            setKeywordFlag(true)
-            return
-        }
-        const response=await dispatch(searchBook(searched_keyword,page,limit))
-        setSearchedBooks(response.data.books)       
-        setTotalPages(response.data.totalPages)             
-        setBookSearchFlag(true)              
-        setKeywordFlag(false)
-
-    }
-
+    const navigate=useNavigate()  
     function handleFormData(form){
         const formData=new FormData()
-        const bookList=tempBookList.map(book=>book._id)
+        if(editBookset&&Object.keys(dirtyFields).length!==0){
+            const updates={}
+            Object.keys(dirtyFields).forEach(key=>{
+                if(key!=='thumbnail')
+                updates[key]=form[key]
+
+             if(key === 'bookList'){
+                updates.bookList = form.bookList.map(
+                    book => book._id
+                )
+            }
+            })
+            
+            formData.append('updates',JSON.stringify(updates))    
+            formData.append('booksetID',bookset._id)        
+            formData.append('thumbnail',form.thumbnail)            
+            dispatch(updateBookset(formData,navigate))
+            return
+        }
+        const bookList=form.bookList.map(book=>book._id)
         formData.append('booksetTitle',form.booksetTitle)
         formData.append('booksetDescription',form.booksetDescription)
         formData.append('thumbnail',form.thumbnail[0])
         formData.append('sellingPrice',form.sellingPrice)
         formData.append('maxPrice',form.maxPrice)
-        formData.append('categoryID',form.category)
-        formData.append('bookList',JSON.stringify(bookList))
+        formData.append('categoryID',form.category) 
+        formData.append('bookList',JSON.stringify(bookList))        
         dispatch(addBookset(formData))
     }
-
-    function handleAddBook(book){
-        console.log('handleAddBook called',tempBookList)
-       const exist=tempBookList.some(existing_book=>existing_book._id===book._id)
-       if(exist){
-        setBookExistFlag(true) 
-        console.log('flag checked!!!')       
-        return 
-       }
-        setTempBookList([...tempBookList,book])
-    }
-    function handleBookExistButton(){
-        console.log('handlebookexistbutton callled')
-        setBookExistFlag(false)
-    }
-     function handleRemoveBook(book){
-        console.log('handleRemoveBook is called',tempBookList)       
-            const updateBookList=tempBookList.filter(existing_book=>existing_book._id!==book._id)
-            setTempBookList([...updateBookList])
-       
-    }
+   
+    //useEffect(()=>{console.log('dirtyFields:',dirtyFields)},[dirtyFields])
 
     useEffect(()=>{
         async function loadCategories(){
@@ -96,34 +65,34 @@ const AddBookset = () => {
         }
         if(categories.length===0){
             loadCategories()
-        }
-        
-        if(!booksetLoading){
-            reset()
-            setTempBookList([])
-            setSearchedBooks([])
-            setBookSearchFlag(false)
-            searchBox.current.value=''
-            setKeywordFlag(false)
-        }
-        
-    },[booksetLoading])
-
-    useEffect(()=>{
-        if(searchBox.current.value.trim()!==''){
-            handleBookSearch()
         }        
-           
-    },[counter])
-
-    useEffect(()=>{
-        if(searchBox.current.value.trim()!=''){
-            setCounter(1)
-            handleBookSearch()
+        if(!loading){
+            reset()           
         }
-    },[limit])
+        
+    },[loading])
+
     
-     
+      useEffect(()=>{ 
+        console.log('bookset value:',bookset)
+        if(editBookset&&categories.length>0){
+            reset({
+                ...bookset,
+                category:bookset.category._id,
+                thumbnail:bookset.thumbnail,    
+                bookList:bookset.bookList || []            
+                    
+            })
+           
+         }                
+        if(!editBookset){
+            reset()
+        }},[editBookset,categories])
+    
+    function handleCancelEditBookset(){
+        dispatch(setEditBookset(false))
+        navigate('/bookset/view-all-booksets')
+    }     
   
   return (
     <div>
@@ -131,6 +100,9 @@ const AddBookset = () => {
             <h4>
                 Add Bookset
             </h4>
+             { editBookset&&<div className='d-flex justify-content-end'>
+                     <button className="btn btn-sm btn-primary" onClick={handleCancelEditBookset}>Cancel Edit</button>
+                </div>}
 
             {/* Books form */}
             <div>
@@ -167,9 +139,24 @@ const AddBookset = () => {
                                 {errors.booksetDescription?.message}
                             </div>
                         </div>
+                          <label className='form-label'>Add course thumbnail</label>        
+                            <div className='form-group col-12 d-flex justify-content-center'>   
+                            
+                            <div className='w-50'>
+                                <Controller
+                                    name='thumbnail'
+                                    control={control}              
+                                    render={({field})=>
+                                    <FileUploadBooksetThumbnail value={field.value} 
+                                            onChange={field.onChange} 
+                                            accept={{"image/jpeg":[],"image/jpg":[],"image/png":[]}}/>} 
+                                    />
+                            </div>
+                            </div>
+                        
 
 
-                        <div className="form-group col-12 col-md-6">
+                        {/* <div className="form-group col-12 col-md-6">
                                 <label htmlFor="inputAddress2" className='form-label'>Thumbnail</label>
                                 <input type="file" className={`form-control form-control-sm ${errors.thumbnail&&`is-invalid`}`} id="inputAddress2" placeholder="Apartment, studio, or floor" 
                                     {...register('thumbnail',
@@ -195,140 +182,17 @@ const AddBookset = () => {
                                         errors.thumbnail?.message
                                     }
                                 </div>
-                        </div>
+                        </div> */}
                         {/* Add Books */}
-                        <h4 className='mt-5'>Add Books</h4>
-                        <hr />   
-                        <div className='form-group col-12 col-md-4'>
-                            <label htmlFor="inputBookName" className='form-label'>Search Book</label>
-                            <div className='input-group'>
-                                <input type="search" name="searched_book" id="" className='form-control form-control-sm' ref={searchBox} placeholder="Type here to search book" />
-                                <button type="button" className='btn btn-warning btn-sm' onClick={handleBookSearch}>
-                                    
-                                  {
-                                    loading?(<div class="spinner-border text-white spinner-border-sm" role="status">
-                                    <span class="sr-only"></span>
-                                    </div>):(
-                                        <i className='bi bi-search'></i>
-                                    )
-                                  }
-                                </button>
-                               
-                            </div>      
-                            {
-                                keywordFlag&&(
-                                    <div style={{fontSize:" 0.875em",color:" #dc3545",marginTop:"0.25rem"}}>*please enter keyword to search</div>
-                                        
-                                )
-                            }                     
-                        </div>
-                        <div className='form-group col-12'>
-                            {
-                                bookExistFlag&&(
-                                    <div className="alert alert-warning d-flex justify-content-between alert-dismissible fade show" role="alert">
-                                        <span><strong>Alert!</strong> Book already exists</span>
-                                        <button type="button" className="btn btn-sm" data-bs-dismiss="alert" onClick={handleBookExistButton}>
-                                            <span className='bi bi-x '></span>
-                                        </button>
-                                     </div>
-                                )
-                            }
-                             <div className='position-relative'>
-                                <table className='table table-striped table-bordered border-2'>
-                                   <thead >
-                                        <tr>
-                                            <th>Sr.no</th>
-                                            <th>Book Name</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Action</th>
-                                        </tr>
-                                   </thead>
-                                   {loading&&<div className='position-absolute  w-100  d-flex justify-content-center align-items-center' style={{height:"calc(100% - 37px)",backgroundColor:"rgba(0,0,0,0.2)"}}>
-
-                                   </div>}
-                                   {
-                                        bookSearchFlag&&(
-                                            
-                                            <tbody>
-                                              {
-                                                searchedBooks.length>0?(
-                                                    searchedBooks.map((book,index)=>
-                                                        <tr key={book._id}>
-                                                            <td>{book.serial_no}</td>
-                                                            <td>{book.bookTitle}</td>
-                                                            <td>{book.category.categoryTitle}</td>
-                                                            <td>{book.sellingPrice}</td>
-                                                            <td>
-                                                                <button type='button' className="btn btn-sm btn-warning" onClick={()=>handleAddBook(book)}><i className='bi bi-plus'></i></button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                ):(
-                                                    <tr >
-                                                        <td colSpan={5} className='text-center' >Sorry, no record found</td>
-                                                    </tr>
-                                                )
-                                              }
-                                            </tbody>
-                                        )
-                                   }
-                                </table>
-                            </div>                      
-                               
-                                <nav aria-label="..." className={`${searchedBooks.length>0?`d-block`:`d-none`}`}>
-                                <div className='d-flex gap-1 align-items-center '>
-                                    <button  type='button' className="btn b tn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-backward-fill'></span></button>
-                                    <button  type='button' className="btn btn-sm btn-outline shadow  " style={{border:'1px solid grey'}} onClick={()=>setCounter(prev=>Math.max(1,prev-1))} ><span className='bi bi-rewind-fill' ></span></button>
-                                        Page
-                                        <input type="text" name="" id="" className="form-control form-control-sm text-center" disabled  value={counter} style={{width:"35px"}}/>
-                                        of {totalPages}                                         
-                                   <button  type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}}onClick={()=>setCounter(prev=>Math.min(totalPages,prev+1))} ><span className='bi bi-fast-forward-fill' ></span></button>
-                                   <button type='button' className="btn btn-sm btn-outline shadow " style={{border:'1px solid grey'}} ><span className='bi bi-skip-forward-fill'></span></button>
-                                    <select name="" id=""    onChange={(e)=>setLimit(e.target.value)}  className=' shadow-lg form-control form-control-sm text-center' style={{width:"35px"}}>
-                                        <option value={3}>3</option>
-                                        <option value={5}>5</option>
-                                        <option value={15}>15</option>
-                                        <option value={20}>20</option>                    
-                                   </select>
-                                </div>
-                            </nav>
-                            
-                        </div>
-
-                         <div className='form-group col-12'>
-                           <label htmlFor="" className='form-label' >Your bookset contains following books:</label>
-                             <div>
-                                <table className='table table-striped table-bordered border-2'>
-                                   <thead>
-                                        <tr>
-                                            <th>Sr.no</th>
-                                            <th>Book Name</th>
-                                            <th>Category</th>
-                                            <th>Price</th>
-                                            <th>Action</th>
-                                        </tr>
-                                   </thead>
-                                  {
-                                    tempBookList.map((book,index)=>
-                                    <tbody>
-                                        <tr key={++index}>
-                                            <td>{++index}</td>
-                                            <td>{book.bookTitle}</td>
-                                            <td>{book.category?.categoryTitle}</td>
-                                            <td>{book.sellingPrice}</td>
-                                            <td>
-                                                <button type='button' className="btn btn-sm btn-danger" onClick={()=>handleRemoveBook(book)}><i className='bi bi-trash'></i></button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    )
-                                  }
-                                </table>
-                            </div>
-
-                        </div>
-
+                         <Controller
+                            name='bookList'
+                            control={control}   
+                            defaultValue={[]}           
+                            render={({field})=>
+                            <BookList 
+                            value={field.value} 
+                                    onChange={field.onChange} 
+                                    />} />
                         
                         <h4 className='mt-5'>Bookset Pricing</h4>
                         <hr />
@@ -386,7 +250,13 @@ const AddBookset = () => {
                         </div>           
                        
                             <div className='form-group mt-5 d-flex justify-content-center'>
-                                <button type="submit" className='btn btn-danger btn-sm'>Add Bookset</button>
+                                {
+                                editBookset?
+                                    Object.keys(dirtyFields).length!==0?
+                                        <button  className='btn btn-warning btn-sm'>Update Book</button>:
+                                        null
+                                    :<button className='btn btn-danger btn-sm'>Add Book</button>
+                                }
                             </div>
                     </div>
               </form>
