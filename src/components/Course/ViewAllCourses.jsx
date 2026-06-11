@@ -48,7 +48,7 @@ const ViewAllCourses = () => {
     }
     async function handleCategorySearch(){
         const categorySearched=categoryPaneRef.current.value
-        let page=1
+        let page
         
         dispatch(setRelay(3))
        if(relay===3&&categorySearched.trim()){

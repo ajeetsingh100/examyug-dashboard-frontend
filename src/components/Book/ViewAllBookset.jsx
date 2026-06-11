@@ -45,16 +45,20 @@ const ViewAllBookset = () => {
   
     async function handleCategorySearch(){
         const categorySearched=categoryPaneRef.current.value
-        let page=1
-        if(categoryHistory===categorySearched){
+        let page
+       
+        dispatch(setRelay(3))
+       if(relay===3&&categorySearched.trim()){
+         if(categoryHistory!==categorySearched){
+            page=1
+            setCounter(1)
+         }else{
             page=counter
-        }
+         }
         console.log('handle category search function callled')
         setKeyword('')
         setCategoryHistory(categorySearched)
         setCategorySelected(categoryPaneRef.current.selectedOptions[0].innerText)
-        dispatch(setRelay(3))
-       if(relay===3&&categorySearched.trim()){
         dispatch(setTableLoader(true))
         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/bookset/category-searched?keyword=${categorySearched}&page=${page}&limit=${limit}`)
         console.log(response.data)
