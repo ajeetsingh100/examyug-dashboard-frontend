@@ -73,7 +73,7 @@ const ViewAllBookCategories = () => {
                                          <td>{category.categoryTitle}</td>
                                          <td>{category.books.length}</td>                                        
                                          <td className='d-flex gap-1'>
-                                             <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2" onClick={()=>handleSelectedCategory(category)}><span className='bi bi-eye'></span></button>
+                                             <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewBookCategoriesModal" onClick={()=>handleSelectedCategory(category)}><span className='bi bi-eye'></span></button>
                                              <button className="btn btn-sm btn-warning" onClick={()=>handleBookCategoryEdit(category)}> <span className='bi bi-pencil'></span></button>
                                              <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                                          </td>
@@ -108,7 +108,7 @@ const ViewAllBookCategories = () => {
          </div>}
          </div>
          {/* Modal */}
-          <div className="modal fade" id="exampleModal2" tabIndex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+          <div className="modal fade" id="viewBookCategoriesModal" tabIndex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">

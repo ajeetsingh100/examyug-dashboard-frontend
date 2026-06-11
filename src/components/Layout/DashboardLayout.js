@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import Header from '../Header/Header';
+import { Outlet } from 'react-router-dom';
+
+
 
 const DashboardLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
@@ -26,13 +29,15 @@ const DashboardLayout = ({ children }) => {
       <div className="main-content">
         <Header toggleSidebar={toggleSidebar} />
         <main className="content-area p-4">
-          {children}
+          <Outlet/>
         </main>
       </div>
       {/* Overlay for mobile */}
       {isSidebarOpen && window.innerWidth <= 768 && (
         <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       )}
+
+      
     </div>
   );
 };

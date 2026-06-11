@@ -1,13 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.jpeg';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../services/operations/authAPI';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const [openMenu, setOpenMenu] = React.useState(null);
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
+  const {user}=useSelector(state=>state.auth)
 
   const toggleMenu = (menuName) => {
     setOpenMenu(openMenu === menuName ? null : menuName);
   };
+  function handleLogout(){
+    dispatch(logout(navigate))
+  }
 
   return (
     <aside
@@ -42,14 +50,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {/* Body */}
       <div className="sidebar-body overflow-y-auto p-3">
         {/* Overview */}
-        <h6
+       {user.role==='super-admin'||user.role==='admin'&& <h6
           className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-2"
           style={{ fontSize: '0.75rem' }}
         >
           Overview
-        </h6>
+        </h6>}
 
-        <ul className="nav flex-column mb-3 gap-1">
+        {user.role==='super-admin'||user.role==='admin'&&<ul className="nav flex-column mb-3 gap-1">
           <li className="nav-item">
             <Link
               to="/"
@@ -59,19 +67,133 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <span>Dashboard</span>
             </Link>
           </li>
-        </ul>
+        </ul>}
+        {/* User Managment */}
+        {user.role=='super-admin'&& <h6
+          className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
+          style={{ fontSize: '0.75rem' }}
+        >
+          User Management
+        </h6>}
+      {user.role==='super-admin'&&<div
+          className="accordion accordion-flush bg-transparent"
+          id="sidebarAccordion2"
+        >
+            <div className="accordion-item bg-transparent border-0 mb-1">
+              <h2 className="accordion-header">
+                <button
+                  className={`accordion-button shadow-none bg-transparent text-body rounded hover-bg py-2 px-3 ${
+                    openMenu === 'user' ? '' : 'collapsed'
+                  }`}
+                  type="button"
+                  onClick={() => toggleMenu('user')}
+                  aria-expanded={openMenu === 'user'}
+                  aria-controls="submenu5"
+                >
+                  <div className="d-flex align-items-center gap-3 w-100">
+                    <i class="bi bi-people fs-5"></i>
+                    <span>User</span>
+                  </div>
+                </button>
+              </h2>
 
+              <div
+                id="submenu2"
+                className={`accordion-collapse collapse ${openMenu === 'user' ? 'show' : ''}`}
+              >
+                <div className="accordion-body p-0 pt-1">
+                  <ul className="nav flex-column ms-4 border-start ps-2 gap-1">
+                    <li className="nav-item">
+                      <Link
+                        to="/user/add-user"
+                        className="nav-link text-body py-1 px-3 rounded hover-bg small"
+                      >
+                        Create User
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link
+                        to="/user/view-all-users"
+                        className="nav-link text-body py-1 px-3 rounded hover-bg small"
+                      >
+                        View All Users
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </div>}
+      {/* Category Management */}
+      <h6
+          className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
+          style={{ fontSize: '0.75rem' }}
+        >
+          Category Management
+        </h6>
+      <div
+          className="accordion accordion-flush bg-transparent"
+          id="sidebarAccordion1"
+        >
+            <div className="accordion-item bg-transparent border-0 mb-1">
+              <h2 className="accordion-header">
+                <button
+                  className={`accordion-button shadow-none bg-transparent text-body rounded hover-bg py-2 px-3 ${
+                    openMenu === 'category' ? '' : 'collapsed'
+                  }`}
+                  type="button"
+                  onClick={() => toggleMenu('category')}
+                  aria-expanded={openMenu === 'category'}
+                  aria-controls="submenu2"
+                >
+                  <div className="d-flex align-items-center gap-3 w-100">
+                    <i className="bi bi-grid fs-5"></i>
+                    <span>Category</span>
+                  </div>
+                </button>
+              </h2>
+
+              <div
+                id="submenu1"
+                className={`accordion-collapse collapse ${openMenu === 'category' ? 'show' : ''}`}
+              >
+                <div className="accordion-body p-0 pt-1">
+                  <ul className="nav flex-column ms-4 border-start ps-2 gap-1">
+                    <li className="nav-item">
+                      <Link
+                        to={`${['super-admin','admin'].includes(user.role)?`/categories/course/add-category`:user.role==='course-manager'?`/categories/course/add-category`:`/categories/book/add-category`}`}
+                        className="nav-link text-body py-1 px-3 rounded hover-bg small"
+                      >
+                        Create Category
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link
+                        to={`${['super-admin','admin'].includes(user.role)?`/categories/view-all-categories/course`:user.role==='course-manager'?`/categories/view-all-categories/course`:`/categories/view-all-categories/book`}`}
+                        className="nav-link text-body py-1 px-3 rounded hover-bg small"
+                      >
+                        View All Categories
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </div>       
+      
         {/* Course Management */}
-        <h6
+        {['admin','super-admin','course-manager'].includes(user.role)&&<h6
           className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
           style={{ fontSize: '0.75rem' }}
         >
           Course Management
-        </h6>
+        </h6>}
 
-        <div
+        {['admin','super-admin','course-manager'].includes(user.role)&&<div
           className="accordion accordion-flush bg-transparent"
-          id="sidebarAccordion1"
+          id="sidebarAccordion3"
         >
           {/* Course */}
           <div className="accordion-item bg-transparent border-0 mb-1">
@@ -93,7 +215,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </h2>
 
             <div
-              id="submenu1"
+              id="submenu3"
               className={`accordion-collapse collapse ${openMenu === 'course' ? 'show' : ''}`}
             >
               <div className="accordion-body p-0 pt-1">
@@ -118,67 +240,20 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 </ul>
               </div>
             </div>
-          </div>
-
-          {/* Category */}
-          <div className="accordion-item bg-transparent border-0 mb-1">
-            <h2 className="accordion-header">
-              <button
-                className={`accordion-button shadow-none bg-transparent text-body rounded hover-bg py-2 px-3 ${
-                  openMenu === 'category' ? '' : 'collapsed'
-                }`}
-                type="button"
-                onClick={() => toggleMenu('category')}
-                aria-expanded={openMenu === 'category'}
-                aria-controls="submenu2"
-              >
-                <div className="d-flex align-items-center gap-3 w-100">
-                  <i className="bi bi-grid fs-5"></i>
-                  <span>Category</span>
-                </div>
-              </button>
-            </h2>
-
-            <div
-              id="submenu2"
-              className={`accordion-collapse collapse ${openMenu === 'category' ? 'show' : ''}`}
-            >
-              <div className="accordion-body p-0 pt-1">
-                <ul className="nav flex-column ms-4 border-start ps-2 gap-1">
-                  <li className="nav-item">
-                    <Link
-                      to="/categories/course/add-category"
-                      className="nav-link text-body py-1 px-3 rounded hover-bg small"
-                    >
-                      Create Category
-                    </Link>
-                  </li>
-
-                  <li className="nav-item">
-                    <Link
-                      to="/categories/view-all-categories/course"
-                      className="nav-link text-body py-1 px-3 rounded hover-bg small"
-                    >
-                      View All Categories
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          </div>          
         </div>
-
+}
         {/* Book Management */}
-        <h6
-          className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
-          style={{ fontSize: '0.75rem' }}
-        >
-          Book Management
-        </h6>
+      {['admin','super-admin','book-manager'].includes(user.role)&&<h6
+        className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
+        style={{ fontSize: '0.75rem' }}
+      >
+        Book Management
+      </h6>}
 
-        <div
+       {['admin','super-admin','book-manager'].includes(user.role)&& <div
           className="accordion accordion-flush bg-transparent"
-          id="sidebarAccordion2"
+          id="sidebarAccordion4"
         >
           {/* Books */}
           <div className="accordion-item bg-transparent border-0 mb-1">
@@ -200,7 +275,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </h2>
 
             <div
-              id="submenu3"
+              id="submenu4"
               className={`accordion-collapse collapse ${openMenu === 'books' ? 'show' : ''}`}
             >
               <div className="accordion-body p-0 pt-1">
@@ -274,13 +349,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
           </div>
         </div>
-
+}
         {/* Sold Products */}
         <h6
           className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
           style={{ fontSize: '0.75rem' }}
         >
-          SOLD PRODUCTS
+          ORDER MANAGMENT
         </h6>
 
         <ul className="nav flex-column mb-3 gap-1">
@@ -290,7 +365,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               className="nav-link d-flex align-items-center gap-3 rounded hover-bg py-2 px-3"
             >
               <i className="bi bi-cart-check fs-5"></i>
-              <span>Today's Sales</span>
+              <span>View Orders</span>
             </Link>
           </li>
 
@@ -299,11 +374,29 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               to="/sales/sales-history"
               className="nav-link d-flex align-items-center gap-3 rounded hover-bg py-2 px-3"
             >
-              <i className="bi bi-clock-history fs-5"></i>
+             <i class="bi bi-graph-up-arrow fs-5"></i>
               <span>Sales History</span>
             </Link>
           </li>
         </ul>
+      {/* OTHERS */}
+        {(user.role==='super-admin'||user.role==='admin')&&<h6
+          className="sidebar-heading text-uppercase text-muted fw-bold mb-2 mt-4"
+          style={{ fontSize: '0.75rem' }}
+        >
+          OTHERS
+        </h6>}
+        {(user.role==='admin'||user.role==='super-admin')&&<ul className="nav flex-column mb-3 gap-1">
+          <li className="nav-item">
+            <Link
+              to="/communication"
+              className="nav-link d-flex align-items-center gap-3 rounded hover-bg py-2 px-3"
+            >
+              <i class="bi bi-chat-left-dots"></i>
+              <span>Communication</span>
+            </Link>
+          </li>
+        </ul>}
       </div>
 
       {/* Footer */}
@@ -319,7 +412,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </Link>
           </li>
 
-          <li className="nav-item">
+          <li className="nav-item" onClick={handleLogout}>
             <a
               href="#!"
               className="nav-link text-danger d-flex align-items-center gap-2 rounded hover-bg py-1 px-3 small"

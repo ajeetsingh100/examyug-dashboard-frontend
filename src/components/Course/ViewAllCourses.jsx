@@ -49,15 +49,21 @@ const ViewAllCourses = () => {
     async function handleCategorySearch(){
         const categorySearched=categoryPaneRef.current.value
         let page=1
-        if(categoryHistory===categorySearched){
+        
+        dispatch(setRelay(3))
+       if(relay===3&&categorySearched.trim()){
+        if(categoryHistory!==categorySearched){
+            console.log('categoryHistory',categoryHistory)
+            page=1
+            setCounter(1)
+        }else{
             page=counter
+            console.log(`categoryHistory:${categoryHistory} categorySearched:${categorySearched}`)
         }
         console.log('handle category search function callled')
         setKeyword('')
         setCategoryHistory(categorySearched)
         setCategorySelected(categoryPaneRef.current.selectedOptions[0].innerText)
-        dispatch(setRelay(3))
-       if(relay===3&&categorySearched.trim()){
         dispatch(setTableLoader(true))
         const response=await apiconnector('get',`${SERVER_API.MAIN_SERVER}/api/v1/course/category-searched?keyword=${categorySearched}&page=${page}&limit=${limit}`)
         console.log(response.data)
@@ -212,7 +218,7 @@ const ViewAllCourses = () => {
                             <td className=''>{course.category.categoryTitle}</td>
                             <td>₹{course.sellingPrice}</td>
                             <td className='d-flex gap-2'>
-                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal1" onClick={()=>handleSelectedCourse(course)}><span className='bi bi-eye text-white'></span></button>
+                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#viewCourseModal" onClick={()=>handleSelectedCourse(course)}><span className='bi bi-eye text-white'></span></button>
                                 <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourse(course)}><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
@@ -253,7 +259,7 @@ const ViewAllCourses = () => {
             </div>
         </div>}
         {/* Modal */}
-        <div className="modal fade" id="exampleModal1" tabIndex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+        <div className="modal fade" id="viewCourseModal" tabIndex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">

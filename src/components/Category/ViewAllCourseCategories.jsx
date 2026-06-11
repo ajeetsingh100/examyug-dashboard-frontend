@@ -69,7 +69,7 @@ const ViewAllCourseCategories = () => {
                                         <td>{category.categoryTitle}</td>
                                         <td>{category.courses.length}</td>                                        
                                         <td className='d-flex gap-1'>
-                                            <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3" onClick={()=>handleViewSelectedCategory(category)}><span className='bi bi-eye'></span></button>
+                                            <button className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewCourseCategoriesModal" onClick={()=>handleViewSelectedCategory(category)}><span className='bi bi-eye'></span></button>
                                             <button className="btn btn-sm btn-warning" onClick={()=>handleEditCourseCategory(category)}> <span className='bi bi-pencil' ></span></button>
                                             <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                                         </td>
@@ -104,7 +104,7 @@ const ViewAllCourseCategories = () => {
         </div>}
         </div>
     {/* Modal */}
-    <div className="modal fade" id="exampleModal3" tabIndex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div className="modal fade" id="viewCourseCategoriesModal" tabIndex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">

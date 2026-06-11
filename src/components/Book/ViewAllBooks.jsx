@@ -214,7 +214,7 @@ const ViewAllBooks = () => {
                             <td className=''>{book?.category.categoryTitle}</td>
                             <td>₹{book.sellingPrice}</td>
                             <td className='d-flex gap-2'>
-                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>handleSelectedCourse(book)}><span className='bi bi-eye text-white'></span></button>
+                                <button className="btn btn-sm btn-primary " data-bs-toggle="modal" data-bs-target="#viewBookModal" onClick={()=>handleSelectedCourse(book)}><span className='bi bi-eye text-white'></span></button>
                                 <button className="btn btn-sm btn-warning" onClick={()=>handleEditBook(book)}><span className='bi bi-pencil'></span></button>
                                 <button className="btn btn-sm btn-danger"><span className='bi bi-trash'></span></button>
                             </td>
@@ -255,7 +255,7 @@ const ViewAllBooks = () => {
             </div>
         </div>}
         {/* Modal */}
-        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="viewBookModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">
